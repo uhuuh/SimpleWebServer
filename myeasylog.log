@@ -1,0 +1,666 @@
+[2023-10-06 18:59:40,361] [T] [140079409276736_name] [EventLoop.cpp:104] - updateChannel, channel 4
+[2023-10-06 18:59:40,361] [T] [140079409276736_name] [Activater.cpp:19] - init 7499
+[2023-10-06 18:59:40,362] [T] [140079409276736_name] [EventLoop.cpp:104] - updateChannel, channel 5
+[2023-10-06 18:59:40,362] [T] [140079409276736_name] [TimerQueue.cpp:14] - init 7499
+[2023-10-06 18:59:40,363] [T] [140079409276736_name] [EventLoop.cpp:18] - init 7499
+[2023-10-06 18:59:40,363] [T] [140079409272576_name] [EventLoop.cpp:104] - updateChannel, channel 6
+[2023-10-06 18:59:40,363] [T] [140079409272576_name] [Activater.cpp:19] - init 7500
+[2023-10-06 18:59:40,364] [T] [140079409272576_name] [EventLoop.cpp:104] - updateChannel, channel 7
+[2023-10-06 18:59:40,371] [T] [140079409272576_name] [TimerQueue.cpp:14] - init 7500
+[2023-10-06 18:59:40,372] [T] [140079409272576_name] [EventLoop.cpp:18] - init 7500
+[2023-10-06 18:59:40,373] [T] [140079409272576_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 18:59:40,373] [T] [140079400879872_name] [EventLoop.cpp:104] - updateChannel, channel 8
+[2023-10-06 18:59:40,374] [T] [140079400879872_name] [Activater.cpp:19] - init 7501
+[2023-10-06 18:59:40,375] [T] [140079400879872_name] [EventLoop.cpp:104] - updateChannel, channel 9
+[2023-10-06 18:59:40,375] [T] [140079400879872_name] [TimerQueue.cpp:14] - init 7501
+[2023-10-06 18:59:40,376] [T] [140079400879872_name] [EventLoop.cpp:18] - init 7501
+[2023-10-06 18:59:40,376] [T] [140079400879872_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 18:59:40,376] [T] [140079392487168_name] [EventLoop.cpp:104] - updateChannel, channel 10
+[2023-10-06 18:59:40,377] [T] [140079392487168_name] [Activater.cpp:19] - init 7502
+[2023-10-06 18:59:40,377] [T] [140079392487168_name] [EventLoop.cpp:104] - updateChannel, channel 11
+[2023-10-06 18:59:40,377] [T] [140079392487168_name] [TimerQueue.cpp:14] - init 7502
+[2023-10-06 18:59:40,378] [T] [140079392487168_name] [EventLoop.cpp:18] - init 7502
+[2023-10-06 18:59:40,378] [T] [140079392487168_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 18:59:40,379] [T] [140079384094464_name] [EventLoop.cpp:104] - updateChannel, channel 12
+[2023-10-06 18:59:40,380] [T] [140079384094464_name] [Activater.cpp:19] - init 7503
+[2023-10-06 18:59:40,380] [T] [140079384094464_name] [EventLoop.cpp:104] - updateChannel, channel 13
+[2023-10-06 18:59:40,381] [T] [140079384094464_name] [TimerQueue.cpp:14] - init 7503
+[2023-10-06 18:59:40,381] [T] [140079384094464_name] [EventLoop.cpp:18] - init 7503
+[2023-10-06 18:59:40,382] [T] [140079384094464_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 18:59:40,382] [T] [140079409276736_name] [Acceptor.cpp:31] - addr reuse
+[2023-10-06 18:59:40,383] [T] [140079409276736_name] [EventLoop.cpp:104] - updateChannel, channel 14
+[2023-10-06 18:59:40,383] [T] [140079409276736_name] [Acceptor.cpp:22] - listen fd=14
+[2023-10-06 18:59:40,384] [T] [140079409276736_name] [Acceptor.cpp:23] - init 7499
+[2023-10-06 18:59:40,384] [T] [140079409276736_name] [TcpServer.cpp:23] - run
+[2023-10-06 18:59:40,384] [T] [140079409276736_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 18:59:47,599] [T] [140079409276736_name] [Acceptor.cpp:45] - accept fd=15
+[2023-10-06 18:59:47,600] [T] [140079409276736_name] [EventLoop.cpp:104] - updateChannel, channel 15
+[2023-10-06 18:59:47,600] [T] [140079409276736_name] [TcpConnection.cpp:38] - init 7499
+[2023-10-06 18:59:47,600] [T] [140079409276736_name] [TcpServer.cpp:43] - create conn, fd=15, addr=127.0.0.1:33406
+[2023-10-06 18:59:50,378] [T] [140079409272576_name] [EventLoop.cpp:56] - poll empty, activater 6, timerQueue 7, other []
+[2023-10-06 18:59:50,384] [T] [140079392487168_name] [EventLoop.cpp:56] - poll empty, activater 10, timerQueue 11, other []
+[2023-10-06 18:59:50,386] [T] [140079400879872_name] [EventLoop.cpp:56] - poll empty, activater 8, timerQueue 9, other [15, ]
+[2023-10-06 18:59:50,392] [T] [140079384094464_name] [EventLoop.cpp:56] - poll empty, activater 12, timerQueue 13, other []
+[2023-10-06 18:59:57,611] [T] [140079409276736_name] [EventLoop.cpp:56] - poll empty, activater 4, timerQueue 5, other [14, ]
+[2023-10-06 18:59:57,971] [T] [140079400879872_name] [TcpConnection.cpp:78] - <- 15
+[2023-10-06 18:59:57,971] [T] [140079400879872_name] [TcpConnection.cpp:68] - -> 15
+[2023-10-06 19:00:00,389] [T] [140079409272576_name] [EventLoop.cpp:56] - poll empty, activater 6, timerQueue 7, other []
+[2023-10-06 19:00:00,389] [T] [140079392487168_name] [EventLoop.cpp:56] - poll empty, activater 10, timerQueue 11, other []
+[2023-10-06 19:00:00,403] [T] [140079384094464_name] [EventLoop.cpp:56] - poll empty, activater 12, timerQueue 13, other []
+[2023-10-06 19:00:07,618] [T] [140079409276736_name] [EventLoop.cpp:56] - poll empty, activater 4, timerQueue 5, other [14, ]
+[2023-10-06 19:00:07,978] [T] [140079400879872_name] [EventLoop.cpp:56] - poll empty, activater 8, timerQueue 9, other [15, ]
+[2023-10-06 19:00:10,398] [T] [140079409272576_name] [EventLoop.cpp:56] - poll empty, activater 6, timerQueue 7, other []
+[2023-10-06 19:00:10,398] [T] [140079392487168_name] [EventLoop.cpp:56] - poll empty, activater 10, timerQueue 11, other []
+[2023-10-06 19:00:10,413] [T] [140079384094464_name] [EventLoop.cpp:56] - poll empty, activater 12, timerQueue 13, other []
+[2023-10-06 19:00:17,629] [T] [140079409276736_name] [EventLoop.cpp:56] - poll empty, activater 4, timerQueue 5, other [14, ]
+[2023-10-06 19:00:17,989] [T] [140079400879872_name] [EventLoop.cpp:56] - poll empty, activater 8, timerQueue 9, other [15, ]
+[2023-10-06 19:00:20,409] [T] [140079409272576_name] [EventLoop.cpp:56] - poll empty, activater 6, timerQueue 7, other []
+[2023-10-06 19:00:20,409] [T] [140079392487168_name] [EventLoop.cpp:56] - poll empty, activater 10, timerQueue 11, other []
+[2023-10-06 19:00:20,424] [T] [140079384094464_name] [EventLoop.cpp:56] - poll empty, activater 12, timerQueue 13, other []
+[2023-10-06 19:00:27,638] [T] [140079409276736_name] [EventLoop.cpp:56] - poll empty, activater 4, timerQueue 5, other [14, ]
+[2023-10-06 19:00:27,995] [T] [140079400879872_name] [EventLoop.cpp:56] - poll empty, activater 8, timerQueue 9, other [15, ]
+[2023-10-06 19:00:30,413] [T] [140079409272576_name] [EventLoop.cpp:56] - poll empty, activater 6, timerQueue 7, other []
+[2023-10-06 19:00:30,420] [T] [140079392487168_name] [EventLoop.cpp:56] - poll empty, activater 10, timerQueue 11, other []
+[2023-10-06 19:00:30,434] [T] [140079384094464_name] [EventLoop.cpp:56] - poll empty, activater 12, timerQueue 13, other []
+[2023-10-06 19:00:37,647] [T] [140079409276736_name] [EventLoop.cpp:56] - poll empty, activater 4, timerQueue 5, other [14, ]
+[2023-10-06 19:00:37,998] [T] [140079400879872_name] [EventLoop.cpp:56] - poll empty, activater 8, timerQueue 9, other [15, ]
+[2023-10-06 19:00:40,418] [T] [140079409272576_name] [EventLoop.cpp:56] - poll empty, activater 6, timerQueue 7, other []
+[2023-10-06 19:00:40,430] [T] [140079392487168_name] [EventLoop.cpp:56] - poll empty, activater 10, timerQueue 11, other []
+[2023-10-06 19:00:40,445] [T] [140079384094464_name] [EventLoop.cpp:56] - poll empty, activater 12, timerQueue 13, other []
+[2023-10-06 19:00:47,657] [T] [140079409276736_name] [EventLoop.cpp:56] - poll empty, activater 4, timerQueue 5, other [14, ]
+[2023-10-06 19:00:48,008] [T] [140079400879872_name] [EventLoop.cpp:56] - poll empty, activater 8, timerQueue 9, other [15, ]
+[2023-10-06 19:00:50,428] [T] [140079409272576_name] [EventLoop.cpp:56] - poll empty, activater 6, timerQueue 7, other []
+[2023-10-06 19:00:50,441] [T] [140079392487168_name] [EventLoop.cpp:56] - poll empty, activater 10, timerQueue 11, other []
+[2023-10-06 19:00:50,455] [T] [140079384094464_name] [EventLoop.cpp:56] - poll empty, activater 12, timerQueue 13, other []
+[2023-10-06 19:00:57,668] [T] [140079409276736_name] [EventLoop.cpp:56] - poll empty, activater 4, timerQueue 5, other [14, ]
+[2023-10-06 19:00:58,018] [T] [140079400879872_name] [EventLoop.cpp:56] - poll empty, activater 8, timerQueue 9, other [15, ]
+[2023-10-06 19:01:00,438] [T] [140079409272576_name] [EventLoop.cpp:56] - poll empty, activater 6, timerQueue 7, other []
+[2023-10-06 19:01:00,451] [T] [140079392487168_name] [EventLoop.cpp:56] - poll empty, activater 10, timerQueue 11, other []
+[2023-10-06 19:01:00,466] [T] [140079384094464_name] [EventLoop.cpp:56] - poll empty, activater 12, timerQueue 13, other []
+[2023-10-06 19:01:07,679] [T] [140079409276736_name] [EventLoop.cpp:56] - poll empty, activater 4, timerQueue 5, other [14, ]
+[2023-10-06 19:01:08,028] [T] [140079400879872_name] [EventLoop.cpp:56] - poll empty, activater 8, timerQueue 9, other [15, ]
+[2023-10-06 19:01:10,449] [T] [140079409272576_name] [EventLoop.cpp:56] - poll empty, activater 6, timerQueue 7, other []
+[2023-10-06 19:01:10,462] [T] [140079392487168_name] [EventLoop.cpp:56] - poll empty, activater 10, timerQueue 11, other []
+[2023-10-06 19:01:10,477] [T] [140079384094464_name] [EventLoop.cpp:56] - poll empty, activater 12, timerQueue 13, other []
+[2023-10-06 19:01:17,688] [T] [140079409276736_name] [EventLoop.cpp:56] - poll empty, activater 4, timerQueue 5, other [14, ]
+[2023-10-06 19:01:18,037] [T] [140079400879872_name] [EventLoop.cpp:56] - poll empty, activater 8, timerQueue 9, other [15, ]
+[2023-10-06 19:01:20,459] [T] [140079409272576_name] [EventLoop.cpp:56] - poll empty, activater 6, timerQueue 7, other []
+[2023-10-06 19:01:20,474] [T] [140079392487168_name] [EventLoop.cpp:56] - poll empty, activater 10, timerQueue 11, other []
+[2023-10-06 19:01:20,487] [T] [140079384094464_name] [EventLoop.cpp:56] - poll empty, activater 12, timerQueue 13, other []
+[2023-10-06 19:01:27,689] [T] [140079409276736_name] [EventLoop.cpp:56] - poll empty, activater 4, timerQueue 5, other [14, ]
+[2023-10-06 19:01:28,048] [T] [140079400879872_name] [EventLoop.cpp:56] - poll empty, activater 8, timerQueue 9, other [15, ]
+[2023-10-06 19:01:30,468] [T] [140079409272576_name] [EventLoop.cpp:56] - poll empty, activater 6, timerQueue 7, other []
+[2023-10-06 19:01:30,484] [T] [140079392487168_name] [EventLoop.cpp:56] - poll empty, activater 10, timerQueue 11, other []
+[2023-10-06 19:01:30,498] [T] [140079384094464_name] [EventLoop.cpp:56] - poll empty, activater 12, timerQueue 13, other []
+[2023-10-06 19:01:37,698] [T] [140079409276736_name] [EventLoop.cpp:56] - poll empty, activater 4, timerQueue 5, other [14, ]
+[2023-10-06 19:01:38,059] [T] [140079400879872_name] [EventLoop.cpp:56] - poll empty, activater 8, timerQueue 9, other [15, ]
+[2023-10-06 19:01:39,586] [T] [140079400879872_name] [TcpConnection.cpp:78] - <- 15
+[2023-10-06 20:05:22,789] [T] [139946010478400_name] [EventLoop.cpp:104] - updateChannel, channel 4
+[2023-10-06 20:05:22,789] [T] [139946010478400_name] [Activater.cpp:19] - init 29755
+[2023-10-06 20:05:22,790] [T] [139946010478400_name] [EventLoop.cpp:104] - updateChannel, channel 5
+[2023-10-06 20:05:22,790] [T] [139946010478400_name] [TimerQueue.cpp:14] - init 29755
+[2023-10-06 20:05:22,790] [T] [139946010478400_name] [EventLoop.cpp:18] - init 29755
+[2023-10-06 20:05:22,791] [T] [139946010474240_name] [EventLoop.cpp:104] - updateChannel, channel 6
+[2023-10-06 20:05:22,791] [T] [139946010474240_name] [Activater.cpp:19] - init 29756
+[2023-10-06 20:05:22,792] [T] [139946010474240_name] [EventLoop.cpp:104] - updateChannel, channel 7
+[2023-10-06 20:05:22,792] [T] [139946010474240_name] [TimerQueue.cpp:14] - init 29756
+[2023-10-06 20:05:22,792] [T] [139946010474240_name] [EventLoop.cpp:18] - init 29756
+[2023-10-06 20:05:22,793] [T] [139946010474240_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:05:22,793] [T] [139946002081536_name] [EventLoop.cpp:104] - updateChannel, channel 8
+[2023-10-06 20:05:22,794] [T] [139946002081536_name] [Activater.cpp:19] - init 29757
+[2023-10-06 20:05:22,794] [T] [139946002081536_name] [EventLoop.cpp:104] - updateChannel, channel 9
+[2023-10-06 20:05:22,795] [T] [139946002081536_name] [TimerQueue.cpp:14] - init 29757
+[2023-10-06 20:05:22,795] [T] [139946002081536_name] [EventLoop.cpp:18] - init 29757
+[2023-10-06 20:05:22,796] [T] [139946002081536_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:05:22,796] [T] [139945993688832_name] [EventLoop.cpp:104] - updateChannel, channel 10
+[2023-10-06 20:05:22,797] [T] [139945993688832_name] [Activater.cpp:19] - init 29758
+[2023-10-06 20:05:22,797] [T] [139945993688832_name] [EventLoop.cpp:104] - updateChannel, channel 11
+[2023-10-06 20:05:22,798] [T] [139945993688832_name] [TimerQueue.cpp:14] - init 29758
+[2023-10-06 20:05:22,798] [T] [139945993688832_name] [EventLoop.cpp:18] - init 29758
+[2023-10-06 20:05:22,798] [T] [139945993688832_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:05:22,799] [T] [139945985296128_name] [EventLoop.cpp:104] - updateChannel, channel 12
+[2023-10-06 20:05:22,799] [T] [139945985296128_name] [Activater.cpp:19] - init 29759
+[2023-10-06 20:05:22,800] [T] [139945985296128_name] [EventLoop.cpp:104] - updateChannel, channel 13
+[2023-10-06 20:05:22,800] [T] [139945985296128_name] [TimerQueue.cpp:14] - init 29759
+[2023-10-06 20:05:22,801] [T] [139945985296128_name] [EventLoop.cpp:18] - init 29759
+[2023-10-06 20:05:22,801] [T] [139945985296128_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:05:22,802] [T] [139946010478400_name] [Acceptor.cpp:31] - addr reuse
+[2023-10-06 20:05:22,802] [T] [139946010478400_name] [EventLoop.cpp:104] - updateChannel, channel 14
+[2023-10-06 20:05:22,803] [T] [139946010478400_name] [Acceptor.cpp:22] - listen fd=14
+[2023-10-06 20:05:22,803] [T] [139946010478400_name] [Acceptor.cpp:23] - init 29755
+[2023-10-06 20:05:22,803] [T] [139946010478400_name] [TcpServer.cpp:23] - run
+[2023-10-06 20:05:22,804] [T] [139946010478400_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:05:29,670] [T] [139946010478400_name] [Acceptor.cpp:45] - accept fd=15
+[2023-10-06 20:05:29,670] [T] [139946010478400_name] [EventLoop.cpp:104] - updateChannel, channel 15
+[2023-10-06 20:05:29,671] [T] [139946010478400_name] [TcpConnection.cpp:41] - init 29755
+[2023-10-06 20:05:29,671] [T] [139946010478400_name] [TcpServer.cpp:43] - create conn, fd=15, addr=127.0.0.1:41468
+[2023-10-06 20:05:32,803] [T] [139946010474240_name] [EventLoop.cpp:56] - poll empty, activater 6, timerQueue 7, other []
+[2023-10-06 20:05:32,806] [T] [139946002081536_name] [EventLoop.cpp:56] - poll empty, activater 8, timerQueue 9, other [15, ]
+[2023-10-06 20:05:32,809] [T] [139945993688832_name] [EventLoop.cpp:56] - poll empty, activater 10, timerQueue 11, other []
+[2023-10-06 20:05:32,812] [T] [139945985296128_name] [EventLoop.cpp:56] - poll empty, activater 12, timerQueue 13, other []
+[2023-10-06 20:05:39,682] [T] [139946010478400_name] [EventLoop.cpp:56] - poll empty, activater 4, timerQueue 5, other [14, ]
+[2023-10-06 20:05:42,809] [T] [139946010474240_name] [EventLoop.cpp:56] - poll empty, activater 6, timerQueue 7, other []
+[2023-10-06 20:05:42,817] [T] [139946002081536_name] [EventLoop.cpp:56] - poll empty, activater 8, timerQueue 9, other [15, ]
+[2023-10-06 20:05:42,818] [T] [139945985296128_name] [EventLoop.cpp:56] - poll empty, activater 12, timerQueue 13, other []
+[2023-10-06 20:05:42,820] [T] [139945993688832_name] [EventLoop.cpp:56] - poll empty, activater 10, timerQueue 11, other []
+[2023-10-06 20:05:49,692] [T] [139946010478400_name] [EventLoop.cpp:56] - poll empty, activater 4, timerQueue 5, other [14, ]
+[2023-10-06 20:05:52,820] [T] [139946010474240_name] [EventLoop.cpp:56] - poll empty, activater 6, timerQueue 7, other []
+[2023-10-06 20:05:52,821] [T] [139945985296128_name] [EventLoop.cpp:56] - poll empty, activater 12, timerQueue 13, other []
+[2023-10-06 20:05:52,828] [T] [139946002081536_name] [EventLoop.cpp:56] - poll empty, activater 8, timerQueue 9, other [15, ]
+[2023-10-06 20:05:52,830] [T] [139945993688832_name] [EventLoop.cpp:56] - poll empty, activater 10, timerQueue 11, other []
+[2023-10-06 20:05:56,082] [T] [139946002081536_name] [TcpConnection.cpp:78] - <- 15
+[2023-10-06 20:06:05,404] [T] [139886138365760_name] [EventLoop.cpp:104] - updateChannel, channel 4
+[2023-10-06 20:06:05,405] [T] [139886138365760_name] [Activater.cpp:19] - init 30260
+[2023-10-06 20:06:05,405] [T] [139886138365760_name] [EventLoop.cpp:104] - updateChannel, channel 5
+[2023-10-06 20:06:05,406] [T] [139886138365760_name] [TimerQueue.cpp:14] - init 30260
+[2023-10-06 20:06:05,406] [T] [139886138365760_name] [EventLoop.cpp:18] - init 30260
+[2023-10-06 20:06:05,407] [T] [139886138361600_name] [EventLoop.cpp:104] - updateChannel, channel 6
+[2023-10-06 20:06:05,407] [T] [139886138361600_name] [Activater.cpp:19] - init 30261
+[2023-10-06 20:06:05,408] [T] [139886138361600_name] [EventLoop.cpp:104] - updateChannel, channel 7
+[2023-10-06 20:06:05,409] [T] [139886138361600_name] [TimerQueue.cpp:14] - init 30261
+[2023-10-06 20:06:05,409] [T] [139886138361600_name] [EventLoop.cpp:18] - init 30261
+[2023-10-06 20:06:05,410] [T] [139886138361600_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:06:05,411] [T] [139886129968896_name] [EventLoop.cpp:104] - updateChannel, channel 8
+[2023-10-06 20:06:05,411] [T] [139886129968896_name] [Activater.cpp:19] - init 30262
+[2023-10-06 20:06:05,412] [T] [139886129968896_name] [EventLoop.cpp:104] - updateChannel, channel 9
+[2023-10-06 20:06:05,413] [T] [139886129968896_name] [TimerQueue.cpp:14] - init 30262
+[2023-10-06 20:06:05,414] [T] [139886129968896_name] [EventLoop.cpp:18] - init 30262
+[2023-10-06 20:06:05,414] [T] [139886129968896_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:06:05,415] [T] [139886121576192_name] [EventLoop.cpp:104] - updateChannel, channel 10
+[2023-10-06 20:06:05,416] [T] [139886121576192_name] [Activater.cpp:19] - init 30263
+[2023-10-06 20:06:05,416] [T] [139886121576192_name] [EventLoop.cpp:104] - updateChannel, channel 11
+[2023-10-06 20:06:05,417] [T] [139886121576192_name] [TimerQueue.cpp:14] - init 30263
+[2023-10-06 20:06:05,418] [T] [139886121576192_name] [EventLoop.cpp:18] - init 30263
+[2023-10-06 20:06:05,418] [T] [139886121576192_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:06:05,419] [T] [139886113183488_name] [EventLoop.cpp:104] - updateChannel, channel 12
+[2023-10-06 20:06:05,420] [T] [139886113183488_name] [Activater.cpp:19] - init 30264
+[2023-10-06 20:06:05,420] [T] [139886113183488_name] [EventLoop.cpp:104] - updateChannel, channel 13
+[2023-10-06 20:06:05,421] [T] [139886113183488_name] [TimerQueue.cpp:14] - init 30264
+[2023-10-06 20:06:05,421] [T] [139886113183488_name] [EventLoop.cpp:18] - init 30264
+[2023-10-06 20:06:05,422] [T] [139886113183488_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:06:05,422] [T] [139886138365760_name] [Acceptor.cpp:31] - addr reuse
+[2023-10-06 20:06:05,423] [T] [139886138365760_name] [EventLoop.cpp:104] - updateChannel, channel 14
+[2023-10-06 20:06:05,423] [T] [139886138365760_name] [Acceptor.cpp:22] - listen fd=14
+[2023-10-06 20:06:05,424] [T] [139886138365760_name] [Acceptor.cpp:23] - init 30260
+[2023-10-06 20:06:05,424] [T] [139886138365760_name] [TcpServer.cpp:23] - run
+[2023-10-06 20:06:05,425] [T] [139886138365760_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:06:19,443] [T] [140289025185600_name] [EventLoop.cpp:104] - updateChannel, channel 4
+[2023-10-06 20:06:19,443] [T] [140289025185600_name] [Activater.cpp:19] - init 30414
+[2023-10-06 20:06:19,443] [T] [140289025185600_name] [EventLoop.cpp:104] - updateChannel, channel 5
+[2023-10-06 20:06:19,444] [T] [140289025185600_name] [TimerQueue.cpp:14] - init 30414
+[2023-10-06 20:06:19,444] [T] [140289025185600_name] [EventLoop.cpp:18] - init 30414
+[2023-10-06 20:06:19,445] [T] [140289025185600_name] [Connector.cpp:38] - connecting part1
+[2023-10-06 20:06:19,445] [T] [140289025185600_name] [EventLoop.cpp:104] - updateChannel, channel 6
+[2023-10-06 20:06:19,446] [T] [140289025185600_name] [Connector.cpp:33] - init 30414
+[2023-10-06 20:06:19,446] [T] [140289025185600_name] [TcpClient.cpp:20] - run 30414
+[2023-10-06 20:06:19,446] [T] [140289025185600_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:06:19,447] [T] [140289025185600_name] [Connector.cpp:91] - connecting part2
+[2023-10-06 20:06:19,447] [T] [140289025185600_name] [EventLoop.cpp:109] - removeChannel, channel 6
+[2023-10-06 20:06:19,448] [T] [140289025185600_name] [Connector.cpp:86] - retry 1000
+[2023-10-06 20:06:19,448] [T] [140289025185600_name] [TimerQueue.cpp:36] - addTimer
+[2023-10-06 20:06:20,448] [T] [140289025185600_name] [Connector.cpp:38] - connecting part1
+[2023-10-06 20:06:20,449] [T] [140289025185600_name] [EventLoop.cpp:104] - updateChannel, channel 7
+[2023-10-06 20:06:20,449] [T] [140289025185600_name] [Connector.cpp:91] - connecting part2
+[2023-10-06 20:06:20,450] [T] [140289025185600_name] [EventLoop.cpp:109] - removeChannel, channel 7
+[2023-10-06 20:06:20,450] [T] [140289025185600_name] [Connector.cpp:86] - retry 2000
+[2023-10-06 20:06:20,450] [T] [140289025185600_name] [TimerQueue.cpp:36] - addTimer
+[2023-10-06 20:06:22,450] [T] [140289025185600_name] [Connector.cpp:38] - connecting part1
+[2023-10-06 20:06:22,452] [T] [140289025185600_name] [EventLoop.cpp:104] - updateChannel, channel 8
+[2023-10-06 20:06:22,453] [T] [140289025185600_name] [Connector.cpp:91] - connecting part2
+[2023-10-06 20:06:22,453] [T] [140289025185600_name] [EventLoop.cpp:109] - removeChannel, channel 8
+[2023-10-06 20:06:22,454] [T] [140289025185600_name] [Connector.cpp:86] - retry 4000
+[2023-10-06 20:06:22,465] [T] [140289025185600_name] [TimerQueue.cpp:36] - addTimer
+[2023-10-06 20:06:26,465] [T] [140289025185600_name] [Connector.cpp:38] - connecting part1
+[2023-10-06 20:06:26,466] [T] [140289025185600_name] [EventLoop.cpp:104] - updateChannel, channel 9
+[2023-10-06 20:06:26,466] [T] [140289025185600_name] [Connector.cpp:91] - connecting part2
+[2023-10-06 20:06:26,467] [T] [140289025185600_name] [EventLoop.cpp:109] - removeChannel, channel 9
+[2023-10-06 20:06:26,467] [T] [140289025185600_name] [Connector.cpp:86] - retry 8000
+[2023-10-06 20:06:26,467] [T] [140289025185600_name] [TimerQueue.cpp:36] - addTimer
+[2023-10-06 20:06:34,467] [T] [140289025185600_name] [Connector.cpp:38] - connecting part1
+[2023-10-06 20:06:34,468] [T] [140289025185600_name] [EventLoop.cpp:104] - updateChannel, channel 10
+[2023-10-06 20:06:34,468] [T] [140289025185600_name] [Connector.cpp:91] - connecting part2
+[2023-10-06 20:06:34,469] [T] [140289025185600_name] [EventLoop.cpp:109] - removeChannel, channel 10
+[2023-10-06 20:06:34,469] [T] [140289025185600_name] [Connector.cpp:99] - connected
+[2023-10-06 20:06:34,469] [T] [140289025185600_name] [EventLoop.cpp:104] - updateChannel, channel 10
+[2023-10-06 20:06:34,470] [T] [140289025185600_name] [test_TcpClient.cpp:14] - send before
+[2023-10-06 20:07:10,933] [T] [140635054733120_name] [EventLoop.cpp:104] - updateChannel, channel 4
+[2023-10-06 20:07:10,944] [T] [140635054733120_name] [Activater.cpp:19] - init 30895
+[2023-10-06 20:07:10,944] [T] [140635054733120_name] [EventLoop.cpp:104] - updateChannel, channel 5
+[2023-10-06 20:07:10,945] [T] [140635054733120_name] [TimerQueue.cpp:14] - init 30895
+[2023-10-06 20:07:10,945] [T] [140635054733120_name] [EventLoop.cpp:18] - init 30895
+[2023-10-06 20:07:10,946] [T] [140635054728960_name] [EventLoop.cpp:104] - updateChannel, channel 6
+[2023-10-06 20:07:10,946] [T] [140635054728960_name] [Activater.cpp:19] - init 30896
+[2023-10-06 20:07:10,946] [T] [140635054728960_name] [EventLoop.cpp:104] - updateChannel, channel 7
+[2023-10-06 20:07:10,947] [T] [140635054728960_name] [TimerQueue.cpp:14] - init 30896
+[2023-10-06 20:07:10,947] [T] [140635054728960_name] [EventLoop.cpp:18] - init 30896
+[2023-10-06 20:07:10,948] [T] [140635054728960_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:07:10,949] [T] [140635046336256_name] [EventLoop.cpp:104] - updateChannel, channel 8
+[2023-10-06 20:07:10,949] [T] [140635046336256_name] [Activater.cpp:19] - init 30897
+[2023-10-06 20:07:10,949] [T] [140635046336256_name] [EventLoop.cpp:104] - updateChannel, channel 9
+[2023-10-06 20:07:10,950] [T] [140635046336256_name] [TimerQueue.cpp:14] - init 30897
+[2023-10-06 20:07:10,950] [T] [140635046336256_name] [EventLoop.cpp:18] - init 30897
+[2023-10-06 20:07:10,951] [T] [140635046336256_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:07:10,951] [T] [140635037943552_name] [EventLoop.cpp:104] - updateChannel, channel 10
+[2023-10-06 20:07:10,952] [T] [140635037943552_name] [Activater.cpp:19] - init 30898
+[2023-10-06 20:07:10,952] [T] [140635037943552_name] [EventLoop.cpp:104] - updateChannel, channel 11
+[2023-10-06 20:07:10,953] [T] [140635037943552_name] [TimerQueue.cpp:14] - init 30898
+[2023-10-06 20:07:10,953] [T] [140635037943552_name] [EventLoop.cpp:18] - init 30898
+[2023-10-06 20:07:10,953] [T] [140635037943552_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:07:10,954] [T] [140635029550848_name] [EventLoop.cpp:104] - updateChannel, channel 12
+[2023-10-06 20:07:10,954] [T] [140635029550848_name] [Activater.cpp:19] - init 30899
+[2023-10-06 20:07:10,954] [T] [140635029550848_name] [EventLoop.cpp:104] - updateChannel, channel 13
+[2023-10-06 20:07:10,955] [T] [140635029550848_name] [TimerQueue.cpp:14] - init 30899
+[2023-10-06 20:07:10,955] [T] [140635029550848_name] [EventLoop.cpp:18] - init 30899
+[2023-10-06 20:07:10,956] [T] [140635029550848_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:07:10,956] [T] [140635054733120_name] [Acceptor.cpp:31] - addr reuse
+[2023-10-06 20:07:10,957] [T] [140635054733120_name] [EventLoop.cpp:104] - updateChannel, channel 14
+[2023-10-06 20:07:10,957] [T] [140635054733120_name] [Acceptor.cpp:22] - listen fd=14
+[2023-10-06 20:07:10,957] [T] [140635054733120_name] [Acceptor.cpp:23] - init 30895
+[2023-10-06 20:07:10,958] [T] [140635054733120_name] [TcpServer.cpp:23] - run
+[2023-10-06 20:07:10,958] [T] [140635054733120_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:07:20,955] [T] [140635054728960_name] [EventLoop.cpp:56] - poll empty, activater 6, timerQueue 7, other []
+[2023-10-06 20:07:20,958] [T] [140635046336256_name] [EventLoop.cpp:56] - poll empty, activater 8, timerQueue 9, other []
+[2023-10-06 20:07:20,964] [T] [140635037943552_name] [EventLoop.cpp:56] - poll empty, activater 10, timerQueue 11, other []
+[2023-10-06 20:07:20,966] [T] [140635029550848_name] [EventLoop.cpp:56] - poll empty, activater 12, timerQueue 13, other []
+[2023-10-06 20:07:20,968] [T] [140635054733120_name] [EventLoop.cpp:56] - poll empty, activater 4, timerQueue 5, other [14, ]
+[2023-10-06 20:07:30,965] [T] [140635054728960_name] [EventLoop.cpp:56] - poll empty, activater 6, timerQueue 7, other []
+[2023-10-06 20:07:30,966] [T] [140635046336256_name] [EventLoop.cpp:56] - poll empty, activater 8, timerQueue 9, other []
+[2023-10-06 20:07:30,973] [T] [140635029550848_name] [EventLoop.cpp:56] - poll empty, activater 12, timerQueue 13, other []
+[2023-10-06 20:07:30,974] [T] [140635037943552_name] [EventLoop.cpp:56] - poll empty, activater 10, timerQueue 11, other []
+[2023-10-06 20:07:30,978] [T] [140635054733120_name] [EventLoop.cpp:56] - poll empty, activater 4, timerQueue 5, other [14, ]
+[2023-10-06 20:07:40,976] [T] [140635054728960_name] [EventLoop.cpp:56] - poll empty, activater 6, timerQueue 7, other []
+[2023-10-06 20:07:40,977] [T] [140635046336256_name] [EventLoop.cpp:56] - poll empty, activater 8, timerQueue 9, other []
+[2023-10-06 20:07:40,977] [T] [140635029550848_name] [EventLoop.cpp:56] - poll empty, activater 12, timerQueue 13, other []
+[2023-10-06 20:07:40,985] [T] [140635037943552_name] [EventLoop.cpp:56] - poll empty, activater 10, timerQueue 11, other []
+[2023-10-06 20:07:40,988] [T] [140635054733120_name] [EventLoop.cpp:56] - poll empty, activater 4, timerQueue 5, other [14, ]
+[2023-10-06 20:07:50,987] [T] [140635054728960_name] [EventLoop.cpp:56] - poll empty, activater 6, timerQueue 7, other []
+[2023-10-06 20:07:50,987] [T] [140635046336256_name] [EventLoop.cpp:56] - poll empty, activater 8, timerQueue 9, other []
+[2023-10-06 20:07:50,988] [T] [140635029550848_name] [EventLoop.cpp:56] - poll empty, activater 12, timerQueue 13, other []
+[2023-10-06 20:07:50,995] [T] [140635037943552_name] [EventLoop.cpp:56] - poll empty, activater 10, timerQueue 11, other []
+[2023-10-06 20:07:50,998] [T] [140635054733120_name] [EventLoop.cpp:56] - poll empty, activater 4, timerQueue 5, other [14, ]
+[2023-10-06 20:08:00,988] [T] [140635046336256_name] [EventLoop.cpp:56] - poll empty, activater 8, timerQueue 9, other []
+[2023-10-06 20:08:00,997] [T] [140635054728960_name] [EventLoop.cpp:56] - poll empty, activater 6, timerQueue 7, other []
+[2023-10-06 20:08:00,998] [T] [140635029550848_name] [EventLoop.cpp:56] - poll empty, activater 12, timerQueue 13, other []
+[2023-10-06 20:08:00,999] [T] [140635037943552_name] [EventLoop.cpp:56] - poll empty, activater 10, timerQueue 11, other []
+[2023-10-06 20:08:01,008] [T] [140635054733120_name] [EventLoop.cpp:56] - poll empty, activater 4, timerQueue 5, other [14, ]
+[2023-10-06 20:08:02,406] [T] [139913121658688_name] [EventLoop.cpp:104] - updateChannel, channel 4
+[2023-10-06 20:08:02,407] [T] [139913121658688_name] [Activater.cpp:19] - init 31336
+[2023-10-06 20:08:02,407] [T] [139913121658688_name] [EventLoop.cpp:104] - updateChannel, channel 5
+[2023-10-06 20:08:02,407] [T] [139913121658688_name] [TimerQueue.cpp:14] - init 31336
+[2023-10-06 20:08:02,408] [T] [139913121658688_name] [EventLoop.cpp:18] - init 31336
+[2023-10-06 20:08:02,408] [T] [139913121654528_name] [EventLoop.cpp:104] - updateChannel, channel 6
+[2023-10-06 20:08:02,408] [T] [139913121654528_name] [Activater.cpp:19] - init 31337
+[2023-10-06 20:08:02,409] [T] [139913121654528_name] [EventLoop.cpp:104] - updateChannel, channel 7
+[2023-10-06 20:08:02,409] [T] [139913121654528_name] [TimerQueue.cpp:14] - init 31337
+[2023-10-06 20:08:02,409] [T] [139913121654528_name] [EventLoop.cpp:18] - init 31337
+[2023-10-06 20:08:02,410] [T] [139913121654528_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:08:02,410] [T] [139913113261824_name] [EventLoop.cpp:104] - updateChannel, channel 8
+[2023-10-06 20:08:02,411] [T] [139913113261824_name] [Activater.cpp:19] - init 31338
+[2023-10-06 20:08:02,411] [T] [139913113261824_name] [EventLoop.cpp:104] - updateChannel, channel 9
+[2023-10-06 20:08:02,412] [T] [139913113261824_name] [TimerQueue.cpp:14] - init 31338
+[2023-10-06 20:08:02,412] [T] [139913113261824_name] [EventLoop.cpp:18] - init 31338
+[2023-10-06 20:08:02,413] [T] [139913113261824_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:08:02,414] [T] [139913104869120_name] [EventLoop.cpp:104] - updateChannel, channel 10
+[2023-10-06 20:08:02,414] [T] [139913104869120_name] [Activater.cpp:19] - init 31339
+[2023-10-06 20:08:02,415] [T] [139913104869120_name] [EventLoop.cpp:104] - updateChannel, channel 11
+[2023-10-06 20:08:02,415] [T] [139913104869120_name] [TimerQueue.cpp:14] - init 31339
+[2023-10-06 20:08:02,416] [T] [139913104869120_name] [EventLoop.cpp:18] - init 31339
+[2023-10-06 20:08:02,416] [T] [139913104869120_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:08:02,417] [T] [139913096476416_name] [EventLoop.cpp:104] - updateChannel, channel 12
+[2023-10-06 20:08:02,417] [T] [139913096476416_name] [Activater.cpp:19] - init 31340
+[2023-10-06 20:08:02,418] [T] [139913096476416_name] [EventLoop.cpp:104] - updateChannel, channel 13
+[2023-10-06 20:08:02,419] [T] [139913096476416_name] [TimerQueue.cpp:14] - init 31340
+[2023-10-06 20:08:02,420] [T] [139913096476416_name] [EventLoop.cpp:18] - init 31340
+[2023-10-06 20:08:02,420] [T] [139913096476416_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:08:02,421] [T] [139913121658688_name] [Acceptor.cpp:31] - addr reuse
+[2023-10-06 20:08:04,170] [T] [140402947573568_name] [EventLoop.cpp:104] - updateChannel, channel 4
+[2023-10-06 20:08:04,170] [T] [140402947573568_name] [Activater.cpp:19] - init 31372
+[2023-10-06 20:08:04,171] [T] [140402947573568_name] [EventLoop.cpp:104] - updateChannel, channel 5
+[2023-10-06 20:08:04,171] [T] [140402947573568_name] [TimerQueue.cpp:14] - init 31372
+[2023-10-06 20:08:04,171] [T] [140402947573568_name] [EventLoop.cpp:18] - init 31372
+[2023-10-06 20:08:04,172] [T] [140402947569408_name] [EventLoop.cpp:104] - updateChannel, channel 6
+[2023-10-06 20:08:04,172] [T] [140402947569408_name] [Activater.cpp:19] - init 31373
+[2023-10-06 20:08:04,172] [T] [140402947569408_name] [EventLoop.cpp:104] - updateChannel, channel 7
+[2023-10-06 20:08:04,173] [T] [140402947569408_name] [TimerQueue.cpp:14] - init 31373
+[2023-10-06 20:08:04,173] [T] [140402947569408_name] [EventLoop.cpp:18] - init 31373
+[2023-10-06 20:08:04,174] [T] [140402947569408_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:08:04,174] [T] [140402939176704_name] [EventLoop.cpp:104] - updateChannel, channel 8
+[2023-10-06 20:08:04,175] [T] [140402939176704_name] [Activater.cpp:19] - init 31374
+[2023-10-06 20:08:04,175] [T] [140402939176704_name] [EventLoop.cpp:104] - updateChannel, channel 9
+[2023-10-06 20:08:04,176] [T] [140402939176704_name] [TimerQueue.cpp:14] - init 31374
+[2023-10-06 20:08:04,176] [T] [140402939176704_name] [EventLoop.cpp:18] - init 31374
+[2023-10-06 20:08:04,176] [T] [140402939176704_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:08:04,177] [T] [140402930784000_name] [EventLoop.cpp:104] - updateChannel, channel 10
+[2023-10-06 20:08:04,178] [T] [140402930784000_name] [Activater.cpp:19] - init 31375
+[2023-10-06 20:08:04,178] [T] [140402930784000_name] [EventLoop.cpp:104] - updateChannel, channel 11
+[2023-10-06 20:08:04,179] [T] [140402930784000_name] [TimerQueue.cpp:14] - init 31375
+[2023-10-06 20:08:04,179] [T] [140402930784000_name] [EventLoop.cpp:18] - init 31375
+[2023-10-06 20:08:04,180] [T] [140402930784000_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:08:04,180] [T] [140402922391296_name] [EventLoop.cpp:104] - updateChannel, channel 12
+[2023-10-06 20:08:04,180] [T] [140402922391296_name] [Activater.cpp:19] - init 31376
+[2023-10-06 20:08:04,181] [T] [140402922391296_name] [EventLoop.cpp:104] - updateChannel, channel 13
+[2023-10-06 20:08:04,182] [T] [140402922391296_name] [TimerQueue.cpp:14] - init 31376
+[2023-10-06 20:08:04,182] [T] [140402922391296_name] [EventLoop.cpp:18] - init 31376
+[2023-10-06 20:08:04,182] [T] [140402922391296_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:08:04,183] [T] [140402947573568_name] [Acceptor.cpp:31] - addr reuse
+[2023-10-06 20:08:07,489] [T] [140093796341568_name] [EventLoop.cpp:104] - updateChannel, channel 4
+[2023-10-06 20:08:07,490] [T] [140093796341568_name] [Activater.cpp:19] - init 31429
+[2023-10-06 20:08:07,490] [T] [140093796341568_name] [EventLoop.cpp:104] - updateChannel, channel 5
+[2023-10-06 20:08:07,490] [T] [140093796341568_name] [TimerQueue.cpp:14] - init 31429
+[2023-10-06 20:08:07,491] [T] [140093796341568_name] [EventLoop.cpp:18] - init 31429
+[2023-10-06 20:08:07,491] [T] [140093796337408_name] [EventLoop.cpp:104] - updateChannel, channel 6
+[2023-10-06 20:08:07,492] [T] [140093796337408_name] [Activater.cpp:19] - init 31430
+[2023-10-06 20:08:07,492] [T] [140093796337408_name] [EventLoop.cpp:104] - updateChannel, channel 7
+[2023-10-06 20:08:07,492] [T] [140093796337408_name] [TimerQueue.cpp:14] - init 31430
+[2023-10-06 20:08:07,493] [T] [140093796337408_name] [EventLoop.cpp:18] - init 31430
+[2023-10-06 20:08:07,493] [T] [140093796337408_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:08:07,494] [T] [140093713020672_name] [EventLoop.cpp:104] - updateChannel, channel 8
+[2023-10-06 20:08:07,495] [T] [140093713020672_name] [Activater.cpp:19] - init 31431
+[2023-10-06 20:08:07,495] [T] [140093713020672_name] [EventLoop.cpp:104] - updateChannel, channel 9
+[2023-10-06 20:08:07,496] [T] [140093713020672_name] [TimerQueue.cpp:14] - init 31431
+[2023-10-06 20:08:07,496] [T] [140093713020672_name] [EventLoop.cpp:18] - init 31431
+[2023-10-06 20:08:07,497] [T] [140093713020672_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:08:07,497] [T] [140093704627968_name] [EventLoop.cpp:104] - updateChannel, channel 10
+[2023-10-06 20:08:07,498] [T] [140093704627968_name] [Activater.cpp:19] - init 31432
+[2023-10-06 20:08:07,498] [T] [140093704627968_name] [EventLoop.cpp:104] - updateChannel, channel 11
+[2023-10-06 20:08:07,499] [T] [140093704627968_name] [TimerQueue.cpp:14] - init 31432
+[2023-10-06 20:08:07,499] [T] [140093704627968_name] [EventLoop.cpp:18] - init 31432
+[2023-10-06 20:08:07,500] [T] [140093704627968_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:08:07,500] [T] [140093696235264_name] [EventLoop.cpp:104] - updateChannel, channel 12
+[2023-10-06 20:08:07,501] [T] [140093696235264_name] [Activater.cpp:19] - init 31433
+[2023-10-06 20:08:07,501] [T] [140093696235264_name] [EventLoop.cpp:104] - updateChannel, channel 13
+[2023-10-06 20:08:07,502] [T] [140093696235264_name] [TimerQueue.cpp:14] - init 31433
+[2023-10-06 20:08:07,502] [T] [140093696235264_name] [EventLoop.cpp:18] - init 31433
+[2023-10-06 20:08:07,503] [T] [140093696235264_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:08:07,503] [T] [140093796341568_name] [Acceptor.cpp:31] - addr reuse
+[2023-10-06 20:08:08,603] [T] [140528798304064_name] [EventLoop.cpp:104] - updateChannel, channel 4
+[2023-10-06 20:08:08,603] [T] [140528798304064_name] [Activater.cpp:19] - init 31449
+[2023-10-06 20:08:08,604] [T] [140528798304064_name] [EventLoop.cpp:104] - updateChannel, channel 5
+[2023-10-06 20:08:08,604] [T] [140528798304064_name] [TimerQueue.cpp:14] - init 31449
+[2023-10-06 20:08:08,604] [T] [140528798304064_name] [EventLoop.cpp:18] - init 31449
+[2023-10-06 20:08:08,605] [T] [140528798299904_name] [EventLoop.cpp:104] - updateChannel, channel 6
+[2023-10-06 20:08:08,605] [T] [140528798299904_name] [Activater.cpp:19] - init 31450
+[2023-10-06 20:08:08,605] [T] [140528798299904_name] [EventLoop.cpp:104] - updateChannel, channel 7
+[2023-10-06 20:08:08,606] [T] [140528798299904_name] [TimerQueue.cpp:14] - init 31450
+[2023-10-06 20:08:08,606] [T] [140528798299904_name] [EventLoop.cpp:18] - init 31450
+[2023-10-06 20:08:08,606] [T] [140528798299904_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:08:08,607] [T] [140528789907200_name] [EventLoop.cpp:104] - updateChannel, channel 8
+[2023-10-06 20:08:08,607] [T] [140528789907200_name] [Activater.cpp:19] - init 31451
+[2023-10-06 20:08:08,608] [T] [140528789907200_name] [EventLoop.cpp:104] - updateChannel, channel 9
+[2023-10-06 20:08:08,608] [T] [140528789907200_name] [TimerQueue.cpp:14] - init 31451
+[2023-10-06 20:08:08,609] [T] [140528789907200_name] [EventLoop.cpp:18] - init 31451
+[2023-10-06 20:08:08,609] [T] [140528789907200_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:08:08,610] [T] [140528712677120_name] [EventLoop.cpp:104] - updateChannel, channel 10
+[2023-10-06 20:08:08,610] [T] [140528712677120_name] [Activater.cpp:19] - init 31452
+[2023-10-06 20:08:08,610] [T] [140528712677120_name] [EventLoop.cpp:104] - updateChannel, channel 11
+[2023-10-06 20:08:08,611] [T] [140528712677120_name] [TimerQueue.cpp:14] - init 31452
+[2023-10-06 20:08:08,611] [T] [140528712677120_name] [EventLoop.cpp:18] - init 31452
+[2023-10-06 20:08:08,612] [T] [140528712677120_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:08:08,612] [T] [140528704284416_name] [EventLoop.cpp:104] - updateChannel, channel 12
+[2023-10-06 20:08:08,613] [T] [140528704284416_name] [Activater.cpp:19] - init 31453
+[2023-10-06 20:08:08,613] [T] [140528704284416_name] [EventLoop.cpp:104] - updateChannel, channel 13
+[2023-10-06 20:08:08,614] [T] [140528704284416_name] [TimerQueue.cpp:14] - init 31453
+[2023-10-06 20:08:08,614] [T] [140528704284416_name] [EventLoop.cpp:18] - init 31453
+[2023-10-06 20:08:08,615] [T] [140528704284416_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:08:08,615] [T] [140528798304064_name] [Acceptor.cpp:31] - addr reuse
+[2023-10-06 20:08:10,998] [T] [140635046336256_name] [EventLoop.cpp:56] - poll empty, activater 8, timerQueue 9, other []
+[2023-10-06 20:08:11,008] [T] [140635029550848_name] [EventLoop.cpp:56] - poll empty, activater 12, timerQueue 13, other []
+[2023-10-06 20:08:11,008] [T] [140635037943552_name] [EventLoop.cpp:56] - poll empty, activater 10, timerQueue 11, other []
+[2023-10-06 20:08:11,009] [T] [140635054728960_name] [EventLoop.cpp:56] - poll empty, activater 6, timerQueue 7, other []
+[2023-10-06 20:08:11,018] [T] [140635054733120_name] [EventLoop.cpp:56] - poll empty, activater 4, timerQueue 5, other [14, ]
+[2023-10-06 20:08:17,628] [T] [139933772396352_name] [EventLoop.cpp:104] - updateChannel, channel 4
+[2023-10-06 20:08:17,628] [T] [139933772396352_name] [Activater.cpp:19] - init 31565
+[2023-10-06 20:08:17,628] [T] [139933772396352_name] [EventLoop.cpp:104] - updateChannel, channel 5
+[2023-10-06 20:08:17,629] [T] [139933772396352_name] [TimerQueue.cpp:14] - init 31565
+[2023-10-06 20:08:17,629] [T] [139933772396352_name] [EventLoop.cpp:18] - init 31565
+[2023-10-06 20:08:17,630] [T] [139933772392192_name] [EventLoop.cpp:104] - updateChannel, channel 6
+[2023-10-06 20:08:17,630] [T] [139933772392192_name] [Activater.cpp:19] - init 31566
+[2023-10-06 20:08:17,631] [T] [139933772392192_name] [EventLoop.cpp:104] - updateChannel, channel 7
+[2023-10-06 20:08:17,631] [T] [139933772392192_name] [TimerQueue.cpp:14] - init 31566
+[2023-10-06 20:08:17,632] [T] [139933772392192_name] [EventLoop.cpp:18] - init 31566
+[2023-10-06 20:08:17,632] [T] [139933772392192_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:08:17,633] [T] [139933763999488_name] [EventLoop.cpp:104] - updateChannel, channel 8
+[2023-10-06 20:08:17,633] [T] [139933763999488_name] [Activater.cpp:19] - init 31567
+[2023-10-06 20:08:17,634] [T] [139933763999488_name] [EventLoop.cpp:104] - updateChannel, channel 9
+[2023-10-06 20:08:17,635] [T] [139933763999488_name] [TimerQueue.cpp:14] - init 31567
+[2023-10-06 20:08:17,635] [T] [139933763999488_name] [EventLoop.cpp:18] - init 31567
+[2023-10-06 20:08:17,636] [T] [139933763999488_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:08:17,636] [T] [139933755606784_name] [EventLoop.cpp:104] - updateChannel, channel 10
+[2023-10-06 20:08:17,637] [T] [139933755606784_name] [Activater.cpp:19] - init 31568
+[2023-10-06 20:08:17,637] [T] [139933755606784_name] [EventLoop.cpp:104] - updateChannel, channel 11
+[2023-10-06 20:08:17,638] [T] [139933755606784_name] [TimerQueue.cpp:14] - init 31568
+[2023-10-06 20:08:17,638] [T] [139933755606784_name] [EventLoop.cpp:18] - init 31568
+[2023-10-06 20:08:17,638] [T] [139933755606784_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:08:17,639] [T] [139933747214080_name] [EventLoop.cpp:104] - updateChannel, channel 12
+[2023-10-06 20:08:17,640] [T] [139933747214080_name] [Activater.cpp:19] - init 31569
+[2023-10-06 20:08:17,640] [T] [139933747214080_name] [EventLoop.cpp:104] - updateChannel, channel 13
+[2023-10-06 20:08:17,641] [T] [139933747214080_name] [TimerQueue.cpp:14] - init 31569
+[2023-10-06 20:08:17,641] [T] [139933747214080_name] [EventLoop.cpp:18] - init 31569
+[2023-10-06 20:08:17,641] [T] [139933747214080_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:08:17,642] [T] [139933772396352_name] [Acceptor.cpp:31] - addr reuse
+[2023-10-06 20:08:17,642] [T] [139933772396352_name] [EventLoop.cpp:104] - updateChannel, channel 14
+[2023-10-06 20:08:17,643] [T] [139933772396352_name] [Acceptor.cpp:22] - listen fd=14
+[2023-10-06 20:08:17,644] [T] [139933772396352_name] [Acceptor.cpp:23] - init 31565
+[2023-10-06 20:08:17,656] [T] [139933772396352_name] [TcpServer.cpp:23] - run
+[2023-10-06 20:08:17,662] [T] [139933772396352_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:08:23,872] [T] [139933772396352_name] [Acceptor.cpp:45] - accept fd=15
+[2023-10-06 20:08:23,872] [T] [139933772396352_name] [EventLoop.cpp:104] - updateChannel, channel 15
+[2023-10-06 20:08:23,873] [T] [139933772396352_name] [TcpConnection.cpp:41] - init 31565
+[2023-10-06 20:08:23,873] [T] [139933772396352_name] [TcpServer.cpp:43] - create conn, fd=15, addr=127.0.0.1:57830
+[2023-10-06 20:08:27,634] [T] [139933772392192_name] [EventLoop.cpp:56] - poll empty, activater 6, timerQueue 7, other []
+[2023-10-06 20:08:27,646] [T] [139933763999488_name] [EventLoop.cpp:56] - poll empty, activater 8, timerQueue 9, other [15, ]
+[2023-10-06 20:08:27,649] [T] [139933755606784_name] [EventLoop.cpp:56] - poll empty, activater 10, timerQueue 11, other []
+[2023-10-06 20:08:27,652] [T] [139933747214080_name] [EventLoop.cpp:56] - poll empty, activater 12, timerQueue 13, other []
+[2023-10-06 20:08:33,884] [T] [139933772396352_name] [EventLoop.cpp:56] - poll empty, activater 4, timerQueue 5, other [14, ]
+[2023-10-06 20:08:37,645] [T] [139933772392192_name] [EventLoop.cpp:56] - poll empty, activater 6, timerQueue 7, other []
+[2023-10-06 20:08:37,657] [T] [139933763999488_name] [EventLoop.cpp:56] - poll empty, activater 8, timerQueue 9, other [15, ]
+[2023-10-06 20:08:37,658] [T] [139933755606784_name] [EventLoop.cpp:56] - poll empty, activater 10, timerQueue 11, other []
+[2023-10-06 20:08:37,663] [T] [139933747214080_name] [EventLoop.cpp:56] - poll empty, activater 12, timerQueue 13, other []
+[2023-10-06 20:08:43,894] [T] [139933772396352_name] [EventLoop.cpp:56] - poll empty, activater 4, timerQueue 5, other [14, ]
+[2023-10-06 20:08:47,656] [T] [139933772392192_name] [EventLoop.cpp:56] - poll empty, activater 6, timerQueue 7, other []
+[2023-10-06 20:08:47,658] [T] [139933763999488_name] [EventLoop.cpp:56] - poll empty, activater 8, timerQueue 9, other [15, ]
+[2023-10-06 20:08:47,668] [T] [139933755606784_name] [EventLoop.cpp:56] - poll empty, activater 10, timerQueue 11, other []
+[2023-10-06 20:08:47,673] [T] [139933747214080_name] [EventLoop.cpp:56] - poll empty, activater 12, timerQueue 13, other []
+[2023-10-06 20:08:53,904] [T] [139933772396352_name] [EventLoop.cpp:56] - poll empty, activater 4, timerQueue 5, other [14, ]
+[2023-10-06 20:08:57,658] [T] [139933772392192_name] [EventLoop.cpp:56] - poll empty, activater 6, timerQueue 7, other []
+[2023-10-06 20:08:57,669] [T] [139933763999488_name] [EventLoop.cpp:56] - poll empty, activater 8, timerQueue 9, other [15, ]
+[2023-10-06 20:08:57,678] [T] [139933755606784_name] [EventLoop.cpp:56] - poll empty, activater 10, timerQueue 11, other []
+[2023-10-06 20:08:57,684] [T] [139933747214080_name] [EventLoop.cpp:56] - poll empty, activater 12, timerQueue 13, other []
+[2023-10-06 20:08:58,320] [T] [139933763999488_name] [TcpConnection.cpp:78] - <- 15
+[2023-10-06 20:09:07,357] [T] [140353763546944_name] [EventLoop.cpp:104] - updateChannel, channel 4
+[2023-10-06 20:09:07,358] [T] [140353763546944_name] [Activater.cpp:19] - init 32130
+[2023-10-06 20:09:07,358] [T] [140353763546944_name] [EventLoop.cpp:104] - updateChannel, channel 5
+[2023-10-06 20:09:07,359] [T] [140353763546944_name] [TimerQueue.cpp:14] - init 32130
+[2023-10-06 20:09:07,359] [T] [140353763546944_name] [EventLoop.cpp:18] - init 32130
+[2023-10-06 20:09:07,359] [T] [140353763542784_name] [EventLoop.cpp:104] - updateChannel, channel 6
+[2023-10-06 20:09:07,360] [T] [140353763542784_name] [Activater.cpp:19] - init 32131
+[2023-10-06 20:09:07,360] [T] [140353763542784_name] [EventLoop.cpp:104] - updateChannel, channel 7
+[2023-10-06 20:09:07,360] [T] [140353763542784_name] [TimerQueue.cpp:14] - init 32131
+[2023-10-06 20:09:07,361] [T] [140353763542784_name] [EventLoop.cpp:18] - init 32131
+[2023-10-06 20:09:07,361] [T] [140353763542784_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:09:07,362] [T] [140353755150080_name] [EventLoop.cpp:104] - updateChannel, channel 8
+[2023-10-06 20:09:07,362] [T] [140353755150080_name] [Activater.cpp:19] - init 32132
+[2023-10-06 20:09:07,363] [T] [140353755150080_name] [EventLoop.cpp:104] - updateChannel, channel 9
+[2023-10-06 20:09:07,363] [T] [140353755150080_name] [TimerQueue.cpp:14] - init 32132
+[2023-10-06 20:09:07,364] [T] [140353755150080_name] [EventLoop.cpp:18] - init 32132
+[2023-10-06 20:09:07,364] [T] [140353755150080_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:09:07,365] [T] [140353746757376_name] [EventLoop.cpp:104] - updateChannel, channel 10
+[2023-10-06 20:09:07,366] [T] [140353746757376_name] [Activater.cpp:19] - init 32133
+[2023-10-06 20:09:07,366] [T] [140353746757376_name] [EventLoop.cpp:104] - updateChannel, channel 11
+[2023-10-06 20:09:07,367] [T] [140353746757376_name] [TimerQueue.cpp:14] - init 32133
+[2023-10-06 20:09:07,367] [T] [140353746757376_name] [EventLoop.cpp:18] - init 32133
+[2023-10-06 20:09:07,368] [T] [140353746757376_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:09:07,368] [T] [140353738364672_name] [EventLoop.cpp:104] - updateChannel, channel 12
+[2023-10-06 20:09:07,368] [T] [140353738364672_name] [Activater.cpp:19] - init 32134
+[2023-10-06 20:09:07,369] [T] [140353738364672_name] [EventLoop.cpp:104] - updateChannel, channel 13
+[2023-10-06 20:09:07,369] [T] [140353738364672_name] [TimerQueue.cpp:14] - init 32134
+[2023-10-06 20:09:07,370] [T] [140353738364672_name] [EventLoop.cpp:18] - init 32134
+[2023-10-06 20:09:07,370] [T] [140353738364672_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:09:07,371] [T] [140353763546944_name] [Acceptor.cpp:31] - addr reuse
+[2023-10-06 20:09:07,371] [T] [140353763546944_name] [EventLoop.cpp:104] - updateChannel, channel 14
+[2023-10-06 20:09:07,372] [T] [140353763546944_name] [Acceptor.cpp:22] - listen fd=14
+[2023-10-06 20:09:07,372] [T] [140353763546944_name] [Acceptor.cpp:23] - init 32130
+[2023-10-06 20:09:07,372] [T] [140353763546944_name] [TcpServer.cpp:23] - run
+[2023-10-06 20:09:07,373] [T] [140353763546944_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:09:15,167] [T] [140353763546944_name] [Acceptor.cpp:45] - accept fd=15
+[2023-10-06 20:09:15,167] [T] [140353763546944_name] [EventLoop.cpp:104] - updateChannel, channel 15
+[2023-10-06 20:09:15,167] [T] [140353763546944_name] [TcpConnection.cpp:41] - init 32130
+[2023-10-06 20:09:15,168] [T] [140353763546944_name] [TcpServer.cpp:43] - create conn, fd=15, addr=127.0.0.1:35374
+[2023-10-06 20:09:17,372] [T] [140353763542784_name] [EventLoop.cpp:56] - poll empty, activater 6, timerQueue 7, other []
+[2023-10-06 20:09:17,375] [T] [140353755150080_name] [EventLoop.cpp:56] - poll empty, activater 8, timerQueue 9, other [15, ]
+[2023-10-06 20:09:17,378] [T] [140353746757376_name] [EventLoop.cpp:56] - poll empty, activater 10, timerQueue 11, other []
+[2023-10-06 20:09:17,381] [T] [140353738364672_name] [EventLoop.cpp:56] - poll empty, activater 12, timerQueue 13, other []
+[2023-10-06 20:09:24,923] [T] [140353755150080_name] [TcpConnection.cpp:78] - <- 15
+[2023-10-06 20:28:13,081] [T] [140573692380992_name] [EventLoop.cpp:104] - updateChannel, channel 4
+[2023-10-06 20:28:13,081] [T] [140573692380992_name] [Activater.cpp:19] - init 9128
+[2023-10-06 20:28:13,082] [T] [140573692380992_name] [EventLoop.cpp:104] - updateChannel, channel 5
+[2023-10-06 20:28:13,082] [T] [140573692380992_name] [TimerQueue.cpp:14] - init 9128
+[2023-10-06 20:28:13,082] [T] [140573692380992_name] [EventLoop.cpp:18] - init 9128
+[2023-10-06 20:28:13,083] [T] [140573692380992_name] [Connector.cpp:38] - connecting part1
+[2023-10-06 20:28:13,083] [T] [140573692380992_name] [EventLoop.cpp:104] - updateChannel, channel 6
+[2023-10-06 20:28:13,083] [T] [140573692380992_name] [Connector.cpp:33] - init 9128
+[2023-10-06 20:28:13,084] [T] [140573692380992_name] [TcpClient.cpp:20] - run 9128
+[2023-10-06 20:28:13,084] [T] [140573692380992_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:28:13,085] [T] [140573692380992_name] [Connector.cpp:91] - connecting part2
+[2023-10-06 20:28:13,085] [T] [140573692380992_name] [EventLoop.cpp:109] - removeChannel, channel 6
+[2023-10-06 20:28:13,086] [T] [140573692380992_name] [Connector.cpp:99] - connected
+[2023-10-06 20:28:13,086] [T] [140573692380992_name] [EventLoop.cpp:104] - updateChannel, channel 6
+[2023-10-06 20:28:13,087] [T] [140573692380992_name] [test_TcpClient.cpp:14] - send before
+[2023-10-06 20:28:13,087] [T] [140573692380992_name] [TcpConnection.cpp:68] - -> 6
+[2023-10-06 20:28:13,088] [T] [140573692380992_name] [test_TcpClient.cpp:16] - send after
+[2023-10-06 20:28:13,088] [T] [140573692380992_name] [TcpConnection.cpp:41] - init 9128
+[2023-10-06 20:28:13,089] [T] [140573692380992_name] [TcpClient.cpp:39] - create conn, fd=6, addr=127.0.0.1:1234
+[2023-10-06 20:28:19,111] [T] [140573692380992_name] [TcpConnection.cpp:78] - <- 6
+[2023-10-06 20:35:34,206] [T] [140499395086144_name] [EventLoop.cpp:104] - updateChannel, channel 4
+[2023-10-06 20:35:34,207] [T] [140499395086144_name] [Activater.cpp:19] - init 11839
+[2023-10-06 20:35:34,207] [T] [140499395086144_name] [EventLoop.cpp:104] - updateChannel, channel 5
+[2023-10-06 20:35:34,207] [T] [140499395086144_name] [TimerQueue.cpp:14] - init 11839
+[2023-10-06 20:35:34,208] [T] [140499395086144_name] [EventLoop.cpp:18] - init 11839
+[2023-10-06 20:35:34,208] [T] [140499395086144_name] [Connector.cpp:38] - connecting part1
+[2023-10-06 20:35:34,209] [T] [140499395086144_name] [EventLoop.cpp:104] - updateChannel, channel 6
+[2023-10-06 20:35:34,209] [T] [140499395086144_name] [Connector.cpp:33] - init 11839
+[2023-10-06 20:35:34,209] [T] [140499395086144_name] [TcpClient.cpp:20] - run 11839
+[2023-10-06 20:35:34,210] [T] [140499395086144_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:35:34,210] [T] [140499395086144_name] [Connector.cpp:91] - connecting part2
+[2023-10-06 20:35:34,211] [T] [140499395086144_name] [EventLoop.cpp:109] - removeChannel, channel 6
+[2023-10-06 20:35:34,211] [T] [140499395086144_name] [Connector.cpp:86] - retry 1000
+[2023-10-06 20:35:34,212] [T] [140499395086144_name] [TimerQueue.cpp:36] - addTimer
+[2023-10-06 20:35:35,212] [T] [140499395086144_name] [Connector.cpp:38] - connecting part1
+[2023-10-06 20:35:35,213] [T] [140499395086144_name] [EventLoop.cpp:104] - updateChannel, channel 7
+[2023-10-06 20:35:35,213] [T] [140499395086144_name] [Connector.cpp:91] - connecting part2
+[2023-10-06 20:35:35,214] [T] [140499395086144_name] [EventLoop.cpp:109] - removeChannel, channel 7
+[2023-10-06 20:35:35,214] [T] [140499395086144_name] [Connector.cpp:86] - retry 2000
+[2023-10-06 20:35:35,214] [T] [140499395086144_name] [TimerQueue.cpp:36] - addTimer
+[2023-10-06 20:35:37,214] [T] [140499395086144_name] [Connector.cpp:38] - connecting part1
+[2023-10-06 20:35:37,222] [T] [140499395086144_name] [EventLoop.cpp:104] - updateChannel, channel 8
+[2023-10-06 20:35:37,222] [T] [140499395086144_name] [Connector.cpp:91] - connecting part2
+[2023-10-06 20:35:37,223] [T] [140499395086144_name] [EventLoop.cpp:109] - removeChannel, channel 8
+[2023-10-06 20:35:37,223] [T] [140499395086144_name] [Connector.cpp:86] - retry 4000
+[2023-10-06 20:35:37,224] [T] [140499395086144_name] [TimerQueue.cpp:36] - addTimer
+[2023-10-06 20:35:39,853] [T] [140481400686400_name] [EventLoop.cpp:104] - updateChannel, channel 4
+[2023-10-06 20:35:39,853] [T] [140481400686400_name] [Activater.cpp:19] - init 11917
+[2023-10-06 20:35:39,854] [T] [140481400686400_name] [EventLoop.cpp:104] - updateChannel, channel 5
+[2023-10-06 20:35:39,854] [T] [140481400686400_name] [TimerQueue.cpp:14] - init 11917
+[2023-10-06 20:35:39,854] [T] [140481400686400_name] [EventLoop.cpp:18] - init 11917
+[2023-10-06 20:35:39,855] [T] [140481400682240_name] [EventLoop.cpp:104] - updateChannel, channel 6
+[2023-10-06 20:35:39,855] [T] [140481400682240_name] [Activater.cpp:19] - init 11918
+[2023-10-06 20:35:39,856] [T] [140481400682240_name] [EventLoop.cpp:104] - updateChannel, channel 7
+[2023-10-06 20:35:39,856] [T] [140481400682240_name] [TimerQueue.cpp:14] - init 11918
+[2023-10-06 20:35:39,856] [T] [140481400682240_name] [EventLoop.cpp:18] - init 11918
+[2023-10-06 20:35:39,857] [T] [140481400682240_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:35:39,857] [T] [140481392289536_name] [EventLoop.cpp:104] - updateChannel, channel 8
+[2023-10-06 20:35:39,858] [T] [140481392289536_name] [Activater.cpp:19] - init 11919
+[2023-10-06 20:35:39,858] [T] [140481392289536_name] [EventLoop.cpp:104] - updateChannel, channel 9
+[2023-10-06 20:35:39,859] [T] [140481392289536_name] [TimerQueue.cpp:14] - init 11919
+[2023-10-06 20:35:39,859] [T] [140481392289536_name] [EventLoop.cpp:18] - init 11919
+[2023-10-06 20:35:39,860] [T] [140481392289536_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:35:39,860] [T] [140481383896832_name] [EventLoop.cpp:104] - updateChannel, channel 10
+[2023-10-06 20:35:39,861] [T] [140481383896832_name] [Activater.cpp:19] - init 11920
+[2023-10-06 20:35:39,861] [T] [140481383896832_name] [EventLoop.cpp:104] - updateChannel, channel 11
+[2023-10-06 20:35:39,862] [T] [140481383896832_name] [TimerQueue.cpp:14] - init 11920
+[2023-10-06 20:35:39,862] [T] [140481383896832_name] [EventLoop.cpp:18] - init 11920
+[2023-10-06 20:35:39,862] [T] [140481383896832_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:35:39,863] [T] [140481375504128_name] [EventLoop.cpp:104] - updateChannel, channel 12
+[2023-10-06 20:35:39,863] [T] [140481375504128_name] [Activater.cpp:19] - init 11921
+[2023-10-06 20:35:39,864] [T] [140481375504128_name] [EventLoop.cpp:104] - updateChannel, channel 13
+[2023-10-06 20:35:39,864] [T] [140481375504128_name] [TimerQueue.cpp:14] - init 11921
+[2023-10-06 20:35:39,865] [T] [140481375504128_name] [EventLoop.cpp:18] - init 11921
+[2023-10-06 20:35:39,865] [T] [140481375504128_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:35:39,865] [T] [140481400686400_name] [Acceptor.cpp:31] - addr reuse
+[2023-10-06 20:35:39,866] [T] [140481400686400_name] [EventLoop.cpp:104] - updateChannel, channel 14
+[2023-10-06 20:35:39,866] [T] [140481400686400_name] [Acceptor.cpp:22] - listen fd=14
+[2023-10-06 20:35:39,867] [T] [140481400686400_name] [Acceptor.cpp:23] - init 11917
+[2023-10-06 20:35:39,867] [T] [140481400686400_name] [TcpServer.cpp:23] - run
+[2023-10-06 20:35:39,867] [T] [140481400686400_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:35:41,223] [T] [140499395086144_name] [Connector.cpp:38] - connecting part1
+[2023-10-06 20:35:41,224] [T] [140499395086144_name] [EventLoop.cpp:104] - updateChannel, channel 9
+[2023-10-06 20:35:41,224] [T] [140481400686400_name] [Acceptor.cpp:45] - accept fd=15
+[2023-10-06 20:35:41,224] [T] [140499395086144_name] [Connector.cpp:91] - connecting part2
+[2023-10-06 20:35:41,224] [T] [140481400686400_name] [EventLoop.cpp:104] - updateChannel, channel 15
+[2023-10-06 20:35:41,225] [T] [140499395086144_name] [EventLoop.cpp:109] - removeChannel, channel 9
+[2023-10-06 20:35:41,225] [T] [140481400686400_name] [TcpConnection.cpp:41] - init 11917
+[2023-10-06 20:35:41,225] [T] [140499395086144_name] [Connector.cpp:99] - connected
+[2023-10-06 20:35:41,225] [T] [140481400686400_name] [TcpServer.cpp:43] - create conn, fd=15, addr=127.0.0.1:44762
+[2023-10-06 20:35:41,226] [T] [140499395086144_name] [EventLoop.cpp:104] - updateChannel, channel 9
+[2023-10-06 20:35:41,226] [T] [140499395086144_name] [test_TcpClient.cpp:14] - send before
+[2023-10-06 20:35:41,226] [T] [140499395086144_name] [TcpConnection.cpp:68] - -> 9
+[2023-10-06 20:35:41,227] [T] [140499395086144_name] [test_TcpClient.cpp:16] - send after
+[2023-10-06 20:35:41,227] [T] [140499395086144_name] [TcpConnection.cpp:41] - init 11839
+[2023-10-06 20:35:41,227] [T] [140499395086144_name] [TcpClient.cpp:39] - create conn, fd=9, addr=127.0.0.1:1234
+[2023-10-06 20:35:49,867] [T] [140481400682240_name] [EventLoop.cpp:56] - poll empty, activater 6, timerQueue 7, other []
+[2023-10-06 20:35:49,868] [T] [140481383896832_name] [EventLoop.cpp:56] - poll empty, activater 10, timerQueue 11, other []
+[2023-10-06 20:35:49,868] [T] [140481392289536_name] [EventLoop.cpp:56] - poll empty, activater 8, timerQueue 9, other [15, ]
+[2023-10-06 20:35:49,869] [T] [140481375504128_name] [EventLoop.cpp:56] - poll empty, activater 12, timerQueue 13, other []
+[2023-10-06 20:35:49,869] [T] [140481392289536_name] [TcpConnection.cpp:78] - <- 15
+[2023-10-06 20:35:49,869] [T] [140481392289536_name] [TcpConnection.cpp:68] - -> 15
+[2023-10-06 20:35:49,870] [T] [140499395086144_name] [TcpConnection.cpp:78] - <- 9
+[2023-10-06 20:35:51,236] [T] [140481400686400_name] [EventLoop.cpp:56] - poll empty, activater 4, timerQueue 5, other [14, ]
+[2023-10-06 20:35:52,215] [T] [140499395086144_name] [TcpConnection.cpp:78] - <- 9
+[2023-10-06 20:35:52,216] [T] [140499395086144_name] [EventLoop.cpp:109] - removeChannel, channel 9
+[2023-10-06 20:35:52,216] [T] [140499395086144_name] [TcpClient.cpp:46] - remove conn , fd=9, addr=127.0.0.1:1234
+[2023-10-06 20:35:52,217] [T] [140499395086144_name] [TcpConnection.cpp:73] - destroy 11839
+[2023-10-06 20:36:19,641] [T] [140099466999616_name] [EventLoop.cpp:104] - updateChannel, channel 4
+[2023-10-06 20:36:19,642] [T] [140099466999616_name] [Activater.cpp:19] - init 12184
+[2023-10-06 20:36:19,642] [T] [140099466999616_name] [EventLoop.cpp:104] - updateChannel, channel 5
+[2023-10-06 20:36:19,642] [T] [140099466999616_name] [TimerQueue.cpp:14] - init 12184
+[2023-10-06 20:36:19,643] [T] [140099466999616_name] [EventLoop.cpp:18] - init 12184
+[2023-10-06 20:36:19,643] [T] [140099466995456_name] [EventLoop.cpp:104] - updateChannel, channel 6
+[2023-10-06 20:36:19,644] [T] [140099466995456_name] [Activater.cpp:19] - init 12185
+[2023-10-06 20:36:19,644] [T] [140099466995456_name] [EventLoop.cpp:104] - updateChannel, channel 7
+[2023-10-06 20:36:19,644] [T] [140099466995456_name] [TimerQueue.cpp:14] - init 12185
+[2023-10-06 20:36:19,645] [T] [140099466995456_name] [EventLoop.cpp:18] - init 12185
+[2023-10-06 20:36:19,645] [T] [140099466995456_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:36:19,646] [T] [140099458602752_name] [EventLoop.cpp:104] - updateChannel, channel 8
+[2023-10-06 20:36:19,646] [T] [140099458602752_name] [Activater.cpp:19] - init 12186
+[2023-10-06 20:36:19,647] [T] [140099458602752_name] [EventLoop.cpp:104] - updateChannel, channel 9
+[2023-10-06 20:36:19,647] [T] [140099458602752_name] [TimerQueue.cpp:14] - init 12186
+[2023-10-06 20:36:19,647] [T] [140099458602752_name] [EventLoop.cpp:18] - init 12186
+[2023-10-06 20:36:19,648] [T] [140099458602752_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:36:19,648] [T] [140099450210048_name] [EventLoop.cpp:104] - updateChannel, channel 10
+[2023-10-06 20:36:19,649] [T] [140099450210048_name] [Activater.cpp:19] - init 12187
+[2023-10-06 20:36:19,649] [T] [140099450210048_name] [EventLoop.cpp:104] - updateChannel, channel 11
+[2023-10-06 20:36:19,650] [T] [140099450210048_name] [TimerQueue.cpp:14] - init 12187
+[2023-10-06 20:36:19,650] [T] [140099450210048_name] [EventLoop.cpp:18] - init 12187
+[2023-10-06 20:36:19,651] [T] [140099450210048_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:36:19,651] [T] [140099441817344_name] [EventLoop.cpp:104] - updateChannel, channel 12
+[2023-10-06 20:36:19,652] [T] [140099441817344_name] [Activater.cpp:19] - init 12188
+[2023-10-06 20:36:19,652] [T] [140099441817344_name] [EventLoop.cpp:104] - updateChannel, channel 13
+[2023-10-06 20:36:19,652] [T] [140099441817344_name] [TimerQueue.cpp:14] - init 12188
+[2023-10-06 20:36:19,653] [T] [140099441817344_name] [EventLoop.cpp:18] - init 12188
+[2023-10-06 20:36:19,653] [T] [140099441817344_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:36:19,654] [T] [140099466999616_name] [Acceptor.cpp:31] - addr reuse
+[2023-10-06 20:36:19,654] [T] [140099466999616_name] [EventLoop.cpp:104] - updateChannel, channel 14
+[2023-10-06 20:36:19,655] [T] [140099466999616_name] [Acceptor.cpp:22] - listen fd=14
+[2023-10-06 20:36:19,655] [T] [140099466999616_name] [Acceptor.cpp:23] - init 12184
+[2023-10-06 20:36:19,655] [T] [140099466999616_name] [TcpServer.cpp:23] - run
+[2023-10-06 20:36:19,656] [T] [140099466999616_name] [EventLoop.cpp:41] - loop start
+[2023-10-06 20:36:28,326] [T] [140099466999616_name] [Acceptor.cpp:45] - accept fd=15
+[2023-10-06 20:36:28,326] [T] [140099466999616_name] [EventLoop.cpp:104] - updateChannel, channel 15
+[2023-10-06 20:36:28,326] [T] [140099466999616_name] [TcpConnection.cpp:41] - init 12184
+[2023-10-06 20:36:28,327] [T] [140099466999616_name] [TcpServer.cpp:43] - create conn, fd=15, addr=127.0.0.1:51258
+[2023-10-06 20:36:29,656] [T] [140099466995456_name] [EventLoop.cpp:56] - poll empty, activater 6, timerQueue 7, other []
+[2023-10-06 20:36:29,658] [T] [140099441817344_name] [EventLoop.cpp:56] - poll empty, activater 12, timerQueue 13, other []
+[2023-10-06 20:36:29,658] [T] [140099458602752_name] [EventLoop.cpp:56] - poll empty, activater 8, timerQueue 9, other [15, ]
+[2023-10-06 20:36:29,659] [T] [140099458602752_name] [TcpConnection.cpp:78] - <- 15
+[2023-10-06 20:36:29,660] [T] [140099458602752_name] [TcpConnection.cpp:68] - -> 15
+[2023-10-06 20:36:29,661] [T] [140099450210048_name] [EventLoop.cpp:56] - poll empty, activater 10, timerQueue 11, other []
