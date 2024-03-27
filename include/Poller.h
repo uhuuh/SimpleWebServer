@@ -1,6 +1,6 @@
 #pragma once
-
-#include "type.h"
+#include "base.h"
+#include <sys/epoll.h>
 
 
 class Poller: noncopyable {
@@ -8,10 +8,15 @@ public:
     Poller();
     ~Poller() = default;
 
-    void updateChannel(Channel* channel);
-    void removeChannel(fd_t fd);
-    void poll(uint32_t timeoutMs, std::vector<Channel*>* channels);
-    fd_t m_maxFd;
-    fd_set m_readFds, m_writeFds, m_exceptionFds;
-    std::map<fd_t, Channel*> m_channelMap;
+    void addChannel(Channel* ch);
+    void updateChannel(Channel* ch);
+    void removeChannel(Channel* ch);
+    void poll();
+private:
+    int epoll_fd;
+    int activate_fd;
+    int time_fd;
+    set<int> fd_set;
+    vector<epoll_event> event_list;
+    static const int timeout_ms = 1000; 
 };

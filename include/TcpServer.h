@@ -1,24 +1,26 @@
-#include "type.h"
+#include "base.h"
+using namespace std;
 
-class TcpServer{
+
+class TcpServer: public noncopyable {
 public:
-    TcpServer() = delete;
-    explicit TcpServer(const char* host, in_port_t port, int n_thread = 4);
+    TcpServer(const string& ip, port_t port, int n_thread);
     ~TcpServer() = default;
 
-    void setOpenCallback(UserOpenCallback openCallback) {assertm(!m_openCallback); m_openCallback = openCallback;};
-    void setCloseCallback(UserCloseCallback closeCallback) {assertm(!m_closeCallback); m_closeCallback = closeCallback;}
-    void setMessageCallback(UserMessageCallback messageCallback) {assertm(!m_messageCallback); m_messageCallback = messageCallback;}
     void run();
-    void _createConnection(fd_t fd);
-    void _removeConnection(fd_t fd);
 
-    std::unique_ptr<Eventloop> m_loop;
-    std::unique_ptr<ThreadPoolEventloop> m_loops;
-    std::unique_ptr<Acceptor> m_acceptor;
-    std::map<fd_t, std::shared_ptr<TcpConnection>> m_connectionMap;
+    UserOpenCallback openCallback;
+    UserCloseCallback closeCallback;
+    UserMessageCallback messageCallback;
+private:
+    void create_conn(fd_t fd, const string& peer_ip, const int peer_port);
+    void remove_conn(fd_t fd);
 
-    UserOpenCallback m_openCallback;
-    UserCloseCallback m_closeCallback;
-    UserMessageCallback m_messageCallback;
+    const string ip;
+    port_t port;
+    unique_ptr<EventloopPool> loop_pool;
+    Eventloop* loop;
+    std::unique_ptr<Acceptor> acceptor;
+    std::map<fd_t, std::unique_ptr<TcpConnection>> conn_map;
+    list<fd_t> remove_conn_set;
 };

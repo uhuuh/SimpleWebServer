@@ -1,80 +1,75 @@
 #include "TimerQueue.h"
-
 #include "Channel.h"
 #include "EventLoop.h"
+#include <sys/timerfd.h>
+#include <chrono>
+#include <sys/timerfd.h>
+#include <unistd.h>
 
 
-TimerQueue::TimerQueue(Eventloop* loop):
-    m_loop(loop)
+
+TimeStamp getNowTimeStamp() {
+    // auto now = std::chrono::system_clock::now();
+    auto now = std::chrono::steady_clock::now();
+    // 这里使用steady_clock, timerfd_create那里也要相应使用CLOCK_MONOTONIC
+    auto duration = now.time_since_epoch();
+    auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(duration);
+    return milliseconds.count();
+}
+
+void rest_timefd(int fd, TimeStamp at) {
+    struct itimerspec newValue;
+    struct itimerspec oldValue;
+    memset(&newValue, 0, sizeof(newValue));
+    newValue.it_value.tv_sec = at / int(1e3);
+    newValue.it_value.tv_nsec = (at % int(1e3)) * int(1e6);
+    assertm(::timerfd_settime(fd, TFD_TIMER_ABSTIME, &newValue, nullptr) >= 0);
+}
+
+TimerQueue::TimerQueue(Eventloop* loop)
 {
-    m_fd = createTimeFd();
-    m_channel.reset(new Channel(m_fd));
-    m_channel->addEvent(EventType::READ, [this]{_handleRead();});
-    m_loop->updateChannel(m_channel.get(), false);
-    LOG_TRACE << "init " << m_loop->m_threadId;
+    this->fd = timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CLOEXEC);
+    this->loop = loop;
+
+    this->ch.reset(new Channel(loop, fd));
+    this->ch->enableEvent(EventType::READ, [this](){this->handle_read();});
 }
 
 TimerQueue::~TimerQueue() {
-    ::close(m_fd);
-    LOG_TRACE << "destroy " << m_loop->m_threadId;
+    close(fd);
 }
 
-TimerId TimerQueue::addTimer(Callback cb, TimeStamp at, TimeStamp interval) {
-    auto ptr = new Timer{cb, at, interval};
-
-    auto fun = [this, ptr]() {
-        auto at = ptr->at;
-        bool need_reset = m_timeMap.empty() ? true : at < m_timeMap.begin()->first;
-        auto iter = m_timeMap.insert({at, std::unique_ptr<Timer>(ptr)});
-        auto ptr = iter->second.get();
-        auto insert_res = m_idMap.insert({ptr, iter});
-        assertm(insert_res.second);
-
-        if (need_reset) resetTimeFd(m_fd, at);
-    };
-    m_loop->run(fun, false);
-    LOG_TRACE << "addTimer";
-    return ptr;
+TimerId TimerQueue::addTimer(Callback cb, TimeStamp at) {
+    if (this->ch->enableRead == false) {
+        this->ch->enableEvent(EventType::READ, [this](){this->handle_read();});
+    }
+    
+    bool flag_early = at < timer_map.begin()->first;
+    auto p = timer_map.insert({at, cb});
+    --p; // insert返回的迭代器指向插入元素的下个元素
+    if (flag_early) {
+        rest_timefd(fd, at);
+    }
+    return p;
 }
 
-void TimerQueue::removeTimer(TimerId id) {
-    auto fun = [this, id] {
-        auto ptr = m_idMap.find(id);
-        if (ptr != m_idMap.end()) {
-            m_timeMap.erase(ptr->second);
-            m_idMap.erase(ptr);
-        }
-    };
-    m_loop->run(fun, false);
-    LOG_TRACE << "removeTimer " << id;
+void TimerQueue::cancelTimer(TimerId id) {
+    // todo stl容器的并发情况
+    timer_map.erase(id);
 }
 
-void TimerQueue::_handleRead() {
-    m_loop->assertSameThread();
-
-    readTimeFd(m_fd);
-    auto time_now = getNowTimeStamp();
-    auto iter_after_now = m_timeMap.upper_bound(time_now);
-    auto iter_early = m_timeMap.begin();
-    while (iter_early != m_timeMap.end() && iter_early->first >= iter_after_now->first) {
-        iter_early->second->cb();
-
-        if (iter_early->second->interval != 0) {
-            auto ptr = iter_early->second.get();
-            auto unique_ptr = std::move(iter_early->second);
-            m_idMap.erase(ptr);
-            iter_early = m_timeMap.erase(iter_early);
-
-            ptr->at += ptr->interval;
-            auto iter = m_timeMap.insert({ptr->at, std::move(unique_ptr)});
-            auto insert_res = m_idMap.insert({ptr, iter});
-            assertm(insert_res.second);
+void TimerQueue::handle_read() {
+    auto now = getNowTimeStamp();
+    auto p = timer_map.begin();
+    for ( ; p != timer_map.end(); ) {
+        if (p->first >= now) {
+            p->second();
+            p = timer_map.erase(p);
         } else {
-            auto ptr = iter_early->second.get();
-            m_idMap.erase(ptr);
-            iter_early = m_timeMap.erase(iter_early);
+            rest_timefd(fd, p->first);
+            return;
         }
     }
-    auto time_next = iter_after_now->first;
-    resetTimeFd(m_fd, time_next);
+    this->ch->disableEvent(EventType::READ);
 }
+

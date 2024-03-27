@@ -1,42 +1,57 @@
 #pragma once
-#include "type.h"
+#include "base.h"
+
+enum class TcpConnectionState {
+    CONNECTING,
+    READ_CLOSE,
+    WRITE_CLOSE,
+    DISCONNECT,
+    CLOSE
+};
+
+// todo 实现应用层保活机制
 
 class TcpConnection: noncopyable {
 public:
     TcpConnection(
         Eventloop* loop, 
-        RemoveConnectionCallback remove, 
-        UserOpenCallback openCb,
-        UserCloseCallback closeCb,
-        UserMessageCallback messageCb,
         fd_t fd, 
-        InetAddress localAddr, 
-        InetAddress peerAddr
+        const string& local_ip,
+        const int local_port,
+        const string& peer_ip,
+        const int peer_port,
+        UserOpenCallback open_cb,
+        UserCloseCallback close_cb,
+        UserMessageCallback message_cb,
+        RemoveConnectionCallback remove_conn_cb
     );
+
     ~TcpConnection();
 
     void send(const std::string msg);
     void shutdown();
+
     void beforeDestroy(std::shared_ptr<TcpConnection> conn);
-    void _handleRead();
-    void _handleWrite();
-    void _handleException();
+    void handle_read();
+    void handle_write();
+
     void _afterInit();
 
-    enum state {CONNECTING, DISCONNECTING, DISCONNECTED};
+    UserOpenCallback open_cb;
+    UserCloseCallback close_cb;
+    UserMessageCallback message_cb;
+    RemoveConnectionCallback remove_conn_cb;
 
-    Eventloop* m_loop;
-    RemoveConnectionCallback m_removeConnectionCallback;
-    UserOpenCallback m_openCallback;
-    UserCloseCallback m_closeCallback;
-    UserMessageCallback m_messageCallback;
+    fd_t fd;
+    const string& local_ip;
+    const int local_port;
+    const string& peer_ip;
+    const int peer_port;
 
-    fd_t m_fd;
-    InetAddress m_localAddr;
-    InetAddress m_peerAddr;
-    std::unique_ptr<Channel> m_channel;
-    std::unique_ptr<Buffer> m_inputBuffer;
-    std::unique_ptr<Buffer> m_outputBuffer;
+    Eventloop* loop;
+    std::unique_ptr<Channel> ch;
+    std::unique_ptr<Buffer> in_buf;
+    std::unique_ptr<Buffer> out_buf;
 
-    state m_state;
+    TcpConnectionState state;
 };

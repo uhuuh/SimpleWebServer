@@ -1,72 +1,53 @@
 #include "Poller.h"
 #include "Channel.h"
+#include <sys/epoll.h>
 
 
-void Poller::updateChannel(Channel* channel) {
-    auto fd = channel->getFd();
-    if (channel->isEnableEvent(EventType::READ)) {
-        FD_SET(fd, &m_readFds);
-    } 
-    if (channel->isEnableEvent(EventType::WRITE)) {
-        FD_SET(fd, &m_writeFds);
-    } 
-    if (channel->isEnableEvent(EventType::EXCEPTION)) {
-        FD_SET(fd, &m_exceptionFds);
-    }
-    m_channelMap[fd] = channel;
-    m_maxFd = std::max(fd, m_maxFd);
-}
 
-void Poller::removeChannel(fd_t fd) {
-    assertm(m_channelMap.find(fd) != m_channelMap.end());
-
-    FD_CLR(fd, &m_readFds);
-    FD_CLR(fd, &m_writeFds);
-    FD_CLR(fd, &m_exceptionFds);
-    m_channelMap.erase(fd);
-    m_maxFd = m_channelMap.empty() ? 0 : m_channelMap.rbegin()->first;
-}
-
-Poller::Poller():
-    m_maxFd(0),
-    m_channelMap()
+Poller::Poller()
 {
-    FD_ZERO(&m_readFds);
-    FD_ZERO(&m_writeFds);
-    FD_ZERO(&m_exceptionFds);
+    epoll_fd = epoll_create1(0);
+    assertm(epoll_fd);
 }
 
-void Poller::poll(uint32_t timeoutSec, std::vector<Channel*>* channels) {
-    auto read_fds_copy = m_readFds;
-    auto write_fds_copy = m_writeFds;
-    auto exception_fds_copy = m_exceptionFds;
-    struct timeval timeout{timeoutSec, 0};
+void Poller::addChannel(Channel* ch) {
+    epoll_event ev;
+    ev.data.ptr = ch;
+    ev.events = 0;
+    if (ch->enableRead) {
+        ev.events |= EPOLLIN;
+    }
+    if (ch->enableWrite) {
+        ev.events |= EPOLLOUT;
+    }
+    assertm(epoll_ctl(epoll_fd, EPOLL_CTL_ADD, ch->fd, &ev));
 
-    auto n_fd = ::select(m_maxFd + 1, &read_fds_copy, &write_fds_copy, &exception_fds_copy, &timeout);
-    assertm(n_fd >= 0);
+    fd_set.insert(ch->fd);
+    event_list.resize(fd_set.size());
+}
 
-    for (fd_t fd = 0; fd < m_maxFd + 1; ++fd) {
-        auto ptr = m_channelMap.find(fd);
-        if (ptr == m_channelMap.end()) {
-            continue;
-        }
+void Poller::updateChannel(Channel* ch) {
+    epoll_event ev;
+    ev.data.ptr = ch;
+    ev.events = 0;
+    if (ch->enableRead) {
+        ev.events |= EPOLLIN;
+    }
+    if (ch->enableWrite) {
+        ev.events |= EPOLLOUT;
+    }
+    assertm(epoll_ctl(epoll_fd, EPOLL_CTL_MOD, ch->fd, &ev));
+}
 
-        bool flag_activate = false;
-        if (FD_ISSET(fd, &read_fds_copy) && ptr->second->isEnableEvent(EventType::READ)) {
-            flag_activate = true;
-            ptr->second->activateEvent(EventType::READ);
-        }
-        if (FD_ISSET(fd, &write_fds_copy) && ptr->second->isEnableEvent(EventType::WRITE)) {
-            flag_activate = true;
-            ptr->second->activateEvent(EventType::WRITE);
-        }
-        if (FD_ISSET(fd, &exception_fds_copy) && ptr->second->isEnableEvent(EventType::EXCEPTION)){
-            flag_activate = true;
-            ptr->second->activateEvent(EventType::EXCEPTION);
-        }
+void Poller::removeChannel(Channel *ch) {
+    epoll_event ev;
+    assertm(epoll_ctl(epoll_fd, EPOLL_CTL_DEL, ch->fd, &ev));
+}
 
-        if (flag_activate) {
-            channels->push_back(ptr->second);
-        }
+void Poller::poll() {
+    int n_event = epoll_wait(epoll_fd, &event_list.front(), event_list.size(), timeout_ms);
+    for (int i = 0; i < n_event; ++i) {
+        Channel* ch = static_cast<Channel*>(event_list[i].data.ptr);
+        ch->handleEvent();
     }
 }

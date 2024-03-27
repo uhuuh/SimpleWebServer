@@ -1,16 +1,17 @@
 #include "Buffer.h"
+#include <unistd.h>
 
 
 uint32_t Buffer::pushFrom(fd_t fd) {
-    auto remainRight = m_buffer.capacity() - m_ptrRightWrite;
+    auto remainRight = buf.capacity() - right_write_ptr;
     // todo 通过readv结果, 如果结果在栈空间上则自动扩容
-    if (remainRight < m_initCapacity / 2) {
-        m_buffer.resize(m_buffer.capacity() * 2);
-        remainRight = m_buffer.capacity() - m_ptrRightWrite;
+    if (remainRight < init_capa / 2) {
+        buf.resize(buf.capacity() * 2);
+        remainRight = buf.capacity() - right_write_ptr;
     }
-    auto n = ::read(fd, _begin() + m_ptrRightWrite, remainRight);
-    if (n >= 0) {
-        m_ptrRightWrite += n;
+    auto n = ::read(fd, begin() + right_write_ptr, remainRight);
+    if (n > 0) {
+        right_write_ptr += n;
         return static_cast<uint32_t>(n);
     } else {
         return n;
@@ -18,63 +19,66 @@ uint32_t Buffer::pushFrom(fd_t fd) {
 }
 
 uint32_t  Buffer::popTo(fd_t fd) {
-    auto n = ::write(fd, _begin() + m_ptrLeftRead, getSize());
-    assertm(n >= 0);
-    m_ptrLeftRead += n;
-    return static_cast<uint32_t>(n);
+    auto n = ::write(fd, begin() + left_read_ptr, getSize());
+    if (n > 0) {
+        left_read_ptr += n;
+        return static_cast<uint32_t>(n);
+    } else {
+        return n;
+    }
 }
 
 
 uint32_t Buffer::getSize() {
-    return m_ptrRightWrite - m_ptrLeftRead;
+    return right_write_ptr - left_read_ptr;
 }
 
 Buffer::Buffer():
-        m_ptrLeftRead(0),
-        m_ptrRightWrite(0),
-        m_buffer(m_initCapacity)
+        left_read_ptr(0),
+        right_write_ptr(0),
+        buf(init_capa)
 {}
 
-char *Buffer::_begin() {
-    return &(*m_buffer.begin());
+char *Buffer::begin() {
+    return &(*buf.begin());
 }
 
 std::string_view Buffer::peek() {
-    return {_begin() + m_ptrLeftRead, getSize()};
+    return {begin() + left_read_ptr, getSize()};
 }
 
 void Buffer::pop() { // 弹出左边的
     auto n = peek().size();
-    m_ptrLeftRead += n;
+    left_read_ptr += n;
 }
 
-void Buffer::_bufferMoveHead() {
+void Buffer::buf_move_head() {
     auto size = getSize();
-    std::copy(m_buffer.begin() + m_ptrLeftRead, m_buffer.begin() + m_ptrRightWrite, m_buffer.begin());
-    m_ptrLeftRead = 0;
-    m_ptrRightWrite = size;
+    std::copy(buf.begin() + left_read_ptr, buf.begin() + right_write_ptr, buf.begin());
+    left_read_ptr = 0;
+    right_write_ptr = size;
 }
-void Buffer::_bufferInsertTail(std::string_view str) {
-    std::copy(str.begin(), str.end(), m_buffer.begin() + m_ptrRightWrite);
-    m_ptrRightWrite += str.length();
+void Buffer::buf_insert_tail(std::string_view str) {
+    std::copy(str.begin(), str.end(), buf.begin() + right_write_ptr);
+    right_write_ptr += str.length();
 }
 
 void Buffer::push(std::string_view str) {
-    // 可以先写入socket中一部分
+    // todo 可以先写入socket中一部分
     auto n = str.length();
-    auto remainRight = m_buffer.capacity() - m_ptrRightWrite;
-    auto remainLeft = m_ptrLeftRead;
+    auto remain_right = buf.capacity() - right_write_ptr;
+    auto remain_left = left_read_ptr;
 
-    if (n <= remainRight) {
-        _bufferInsertTail(str);
-    } else if (n <= remainLeft + remainRight) {
-        _bufferMoveHead();
-        _bufferInsertTail(str);
+    if (n <= remain_right) {
+        buf_insert_tail(str);
+    } else if (n <= remain_left + remain_right) {
+        buf_move_head();
+        buf_insert_tail(str);
     } else {
-        auto add = remainLeft + remainRight - n;
-        m_buffer.resize(m_buffer.capacity() + add);
-        _bufferMoveHead();
-        _bufferInsertTail(str);
+        auto add = remain_left + remain_right - n;
+        buf.resize(buf.capacity() + add);
+        buf_move_head();
+        buf_insert_tail(str);
     }
 }
 

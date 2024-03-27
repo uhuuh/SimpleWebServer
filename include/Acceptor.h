@@ -1,19 +1,18 @@
 #pragma once
-#include "type.h"
+#include "base.h"
+
 
 class Acceptor: public noncopyable {
 public:
-    Acceptor(Eventloop* loop, NewConnectionCallback newConnectionCallbackconst, const std::string& host, in_port_t port);
+    Acceptor(Eventloop* loop, CreateConnectionCallback create_conn_cb, const std::string& host, port_t port);
     ~Acceptor();
-    InetAddress getAddress() const {return m_addr;}
+private:
+    void handle_read();
 
-    void _handleRead();
-    fd_t _createListenFd();
-    
-    Eventloop* m_loop;
-    NewConnectionCallback m_newConnctionCallback;
-    InetAddress m_addr;
-    fd_t m_fd;
-    std::unique_ptr<Channel> m_channel;
-    inline const static uint32_t m_maxQueueSize = SOMAXCONN;
+    Eventloop* loop;
+    CreateConnectionCallback create_conn_cb;
+    const string ip;
+    port_t port;
+    fd_t fd;
+    std::unique_ptr<Channel> ch;
 };

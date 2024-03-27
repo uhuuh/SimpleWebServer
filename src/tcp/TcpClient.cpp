@@ -1,49 +1,51 @@
 #include "TcpClient.h"
 #include "Connector.h"
 #include "EventLoop.h"
+#include "EventloopPool.h"
 #include "TcpConnection.h"
 #include "Channel.h"
 
 
-TcpClient::TcpClient(const std::string& host, in_port_t port):
-    m_loop(new Eventloop()),
-    m_connector(new Connector(
-        m_loop.get(), 
-        [this](fd_t fd){_createConnection(fd);},
-        host,
-        port
-    ))
+TcpClient::TcpClient(const string& ip, port_t port):
+    ip(ip),
+    port(port),
+    loop_pool(new EventloopPool(1)),
+    loop(loop_pool->getLoop())
 {
 }
 
 void TcpClient::run() {
-    LOG_TRACE << "run " << m_loop->m_threadId;
-    m_loop->loop();
-}
-
-void TcpClient::_createConnection(fd_t fd) {
-    m_loop->assertSameThread();
-    assertm(!m_connection);
-
-    auto loop = m_loop.get();
-    m_connection = std::make_unique<TcpConnection>(
+    LOG_TRACE << "run";
+    // todo 优化下面的lambda，使用bind试试看
+    connector.reset(new Connector(
         loop,
-        [this](fd_t fd){_removeConnection(fd);},
-        m_openCallback,
-        m_closeCallback,
-        m_messageCallback,
-        fd,
-        Socket::getLocalAddress(fd),
-        Socket::getPeerAddress(fd)
-    );
-    LOG_TRACE << "create conn, fd=" << fd << ", addr=" <<  m_connection->m_peerAddr.toString();
+        [this](auto fd, auto ip, auto port){this->create_conn(fd, ip, port);},
+        ip,
+        port
+    ));
 }
 
-void TcpClient::_removeConnection(fd_t fd) {
-    m_loop->assertSameThread();
-    assertm(bool(m_connection));
-
-    LOG_TRACE << "remove conn , fd=" << fd << ", addr=" << m_connection->m_peerAddr.toString();
-    m_connection->beforeDestroy(std::move(m_connection));
-    // todo 与服务器的连接意外中断, 可以重新调用connector的restart 重连
+void TcpClient::create_conn(fd_t fd, const string& peer_ip, const int peer_port) {
+    auto cb = [this, fd, peer_ip, peer_port]() {
+        auto loop = loop_pool->getLoop();
+        conn = std::make_unique<TcpConnection>(
+            loop,
+            fd, 
+            ip,
+            port,
+            peer_ip,
+            peer_port,
+            openCallback,
+            closeCallback,
+            messageCallback,
+            [this](auto fd){this->remove_conn(fd);}
+        );
+    };
+    loop->addCallback(cb);
 }
+
+void TcpClient::remove_conn(fd_t fd) {
+    // pass
+}
+
+

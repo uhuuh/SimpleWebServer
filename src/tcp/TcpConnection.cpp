@@ -2,108 +2,106 @@
 #include "Channel.h"
 #include "EventLoop.h"
 #include "Buffer.h"
+#include <unistd.h>
+#include <sys/socket.h>
 
 
 TcpConnection::TcpConnection(
-    Eventloop* loop, 
-    RemoveConnectionCallback remove, 
-    UserOpenCallback openCb,
-    UserCloseCallback closeCb,
-    UserMessageCallback messageCb,
+    Eventloop* loop,
     fd_t fd, 
-    InetAddress localAddr, 
-    InetAddress peerAddr
+    const string& local_ip,
+    const int local_port,
+    const string& peer_ip,
+    const int peer_port,
+    UserOpenCallback open_cb,
+    UserCloseCallback close_cb,
+    UserMessageCallback message_cb,
+    RemoveConnectionCallback remove_conn_cb
 ):
-    m_loop(loop),
-    m_removeConnectionCallback(remove),
-    m_openCallback(openCb),
-    m_closeCallback(closeCb),
-    m_messageCallback(messageCb),
-    m_fd(fd),
-    m_localAddr(localAddr),
-    m_peerAddr(peerAddr),
-    m_channel(new Channel(m_fd)),
-    m_inputBuffer(new Buffer()),
-    m_outputBuffer(new Buffer()),
-    m_state(CONNECTING)
+    loop(loop),
+    fd(fd),
+    local_ip(local_ip),
+    local_port(local_port),
+    peer_ip(peer_ip),
+    peer_port(peer_port),
+    open_cb(open_cb),
+    close_cb(close_cb),
+    message_cb(message_cb),
+    remove_conn_cb(remove_conn_cb),
+    state(TcpConnectionState::CONNECTING)
 {
-    
-    m_channel->addEvent(EventType::READ, [this]{_handleRead();});
-    m_channel->addEvent(EventType::WRITE, [this]{_handleWrite();});
-    m_channel->addEvent(EventType::EXCEPTION, [this]{_handleException();});
-    m_loop->updateChannel(m_channel.get(), false);
-    LOG_TRACE << "conn add channel in loop";
-    // note 修改channel的操作必须放在conn的loop中执行. 如果不是这样, channel添加进loop却没有activate, 导致loop要poll empty一次才能意识到loop上的修改
+    ch->enableEvent(EventType::READ, [this]{handle_read();});
 
-    auto fun = [this] {
-        if (m_openCallback) {
-            m_openCallback(this);
-        }
-    };
-    m_loop->run(fun, false); // todo 为什么this指针可以调用private成员函数
-    LOG_TRACE << "init " << m_loop->m_threadId;
+    // todo 为什么this指针可以调用private成员函数
+    if (open_cb) {
+        auto cb = [this] {
+            this->open_cb(this);
+        };
+        loop->addCallback(cb); 
+    }
 }
 
 void TcpConnection::shutdown() {
-    assertm(m_state == CONNECTING);
+    assertm(::shutdown(fd, SHUT_WR));
 
-    assertm(::shutdown(m_fd, SHUT_WR));
-    m_state = DISCONNECTING;
+    if (state == TcpConnectionState::READ_CLOSE) {
+        state = TcpConnectionState::CLOSE;
+        if (close_cb) close_cb(this);
+        ch->disableEvent(EventType::WRITE);
+        remove_conn_cb(fd);
+    } else {
+        state = TcpConnectionState::WRITE_CLOSE;
+        ch->disableEvent(EventType::WRITE);
+    }
 }
 
-void TcpConnection::beforeDestroy(std::shared_ptr<TcpConnection> conn) {
-    // 不能再conn内部调用删除conn的函数, 由于在多线程环境下不能保证runafter一定会在conn内部执行完再调用删除conn的操作, 使用share_ptr保存引用使这个conn不被析构
-    assertm(m_state == DISCONNECTED);
-
-    auto fun = [this, conn]  {
-        if (m_closeCallback) {// 用户回调必须在conn的loop中执行
-            m_closeCallback(conn.get());
-        }
-    };
-    m_loop->run(fun, true); 
-    // note 这里必须是稍后执行, 因为现在只剩自己
-}
 
 void TcpConnection::send(const std::string msg) {
-    assertm(m_state == CONNECTING);
+    assertm(state == TcpConnectionState::CONNECTING);
 
-    m_inputBuffer->push(msg);
-
-    LOG_TRACE << "-> " << m_fd;
+    in_buf->push(msg);
+    ch->enableEvent(EventType::WRITE, [this]{handle_write();});
 }
 
 TcpConnection::~TcpConnection() {
-    ::close(m_fd);
-    LOG_TRACE << "destroy " << m_loop->m_threadId;
+    ::close(fd);
 }
 
-void TcpConnection::_handleRead() {
-    m_loop->assertSameThread();
-    LOG_TRACE << "<- " << m_fd;
+void TcpConnection::handle_read() {
+    auto n = out_buf->pushFrom(fd);
+    if (n == 0) {
 
-    auto n = m_outputBuffer->pushFrom(m_fd);
-    if (n <= 0) {
-        if (n < 0) LOG_TRACE << "conn error";
-        m_state = DISCONNECTED;
-        m_loop->removeChannel(m_fd, false);
-        m_removeConnectionCallback(m_fd);
+    } else if (n < 0) {
+        switch(errno) {
+            case EAGAIN:
+            case EINTR:
+                return;
+            default:
+
+                if (state == TcpConnectionState::WRITE_CLOSE) {
+                    state = TcpConnectionState::CLOSE;
+                    if (close_cb) close_cb(this);
+                    ch->disableEvent(EventType::READ);
+                    remove_conn_cb(fd);
+                } else {
+                    state = TcpConnectionState::READ_CLOSE;
+                    ch->disableEvent(EventType::READ);
+                }
+        }
     } else {
-        if (m_messageCallback) {
-            m_messageCallback(this, m_outputBuffer.get());
+        if (message_cb) {
+            message_cb(this, out_buf.get());
         }
     }
 }
 
-void TcpConnection::_handleWrite() {
-    m_loop->assertSameThread();
+void TcpConnection::handle_write() {
+    // todo logger 如何打印出堆栈
+    assertm(in_buf->getSize() > 0);
 
-    // todo 只有buffer中有数据的时候, 开开启write事件
-    if (m_inputBuffer->getSize() != 0) {
-        m_inputBuffer->popTo(m_fd);
+    in_buf->popTo(fd);
+
+    if (in_buf->getSize() == 0) {
+        ch->disableEvent(EventType::WRITE);
     }
-}
-
-void TcpConnection::_handleException() {
-    m_loop->assertSameThread();
-    assertm(-1);
 }

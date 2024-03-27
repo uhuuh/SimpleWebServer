@@ -1,31 +1,37 @@
 #pragma once
-#include "type.h"
+#include "base.h"
+
 
 class Eventloop: noncopyable {
 public:
     Eventloop();
     ~Eventloop();
 
-    void loop();
+    void run();
     void quit();
-    void run(Callback cb, bool isNextPoll);
-    TimerId addTimerNow(Callback cb, int interval);
-    TimerId addTimerAt(Callback cb, int at, int interval);
-    TimerId addTimerAfter(Callback cb, int after, int interval);
-    void removeTimer(TimerId id);
-    void updateChannel(Channel* channel, bool isNextPoll);
-    void removeChannel(fd_t fd, bool isNextPoll);
-    void assertSameThread();
 
-    bool _isSameThread();
+    // 默认参数用法
+    void addCallback(Callback cb);
 
-    std::mutex m_mutex;
-    std::unique_ptr<Poller> m_poller;
-    std::unique_ptr<Activater> m_activater;
-    std::unique_ptr<TimerQueue> m_timerQueue;
-    std::vector<Callback> m_callbacks;
-    bool m_flagStartLoop = false;
-    bool m_flagHandleEvent = false;
-    inline static const uint32_t m_pollWaitSec = 10;
-    uint32_t m_threadId = -1;
+    TimerId addTimer(Callback cb, TimeStamp delay_ms);
+    void cancelTimer(TimerId id);
+
+    bool is_loop;
+private:
+    // 实现Channel才能使用下面这些函数
+    // 添加修改Channel的函数还是loop实现比Channel实现好，因为是loop修改自身
+    // todo 友元是如何实现的，java中为什么没有友元，什么场景下使用友元
+    friend class Channel;
+    void addChannel(Channel* ch);
+    void updateChannel(Channel* ch);
+    void removeChannel(Channel *ch);
+
+    std::mutex mu;
+    int thread_id;
+    unique_ptr<Poller> poller;
+    unique_ptr<Activater> activater;
+    unique_ptr<TimerQueue> timerQueue;
+    vector<Callback> cb_list;
+    static const uint32_t timeout_ms = 10;
 };
+

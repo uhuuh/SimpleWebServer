@@ -1,15 +1,15 @@
 #pragma once
-#include "type.h"
+#include "base.h"
 
-class Activater: noncopyable {
+
+class Activater: public noncopyable {
 public:
     Activater(Eventloop* loop);
     ~Activater();
-
     void activate();
-    void _handleRead();
-
-    fd_t m_fd;
-    std::unique_ptr<Channel> m_channel;
-    Eventloop* m_loop;
+private:
+    Eventloop* loop;
+    unique_ptr<Channel> ch;
+    fd_t fd;
+    void handle_read();
 };

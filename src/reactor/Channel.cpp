@@ -1,88 +1,51 @@
 #include "Channel.h"
+#include "EventLoop.h"
+#include <unistd.h>
 
-Channel::Channel(fd_t fd):
-    m_fd(fd),
-    m_enableRead(false),
-    m_enableWrite(false),
-    m_enableException(false),
-    m_activateRead(false),
-    m_activateWrite(false),
-    m_activateException(false)
-{}
 
-void Channel::addEvent(EventType event, Callback callback) {
-    if (event == EventType::READ) {
-        this->m_enableRead = true;
-        this->m_readCallback = callback;
-    } else if (event == EventType::WRITE) {
-        this->m_enableWrite = true;
-        this->m_writeCallback = callback;
-    } else if (event == EventType::EXCEPTION) {
-        this->m_enableException = true;
-        this->m_exceptionCallback = callback;
-    } else {
-        FATAL("event type error");
-    }
-    // LOG_TRACE << "addEvent " << int(event);
+Channel::Channel(Eventloop* loop, int fd): loop(loop), fd(fd) {}
+
+Channel::~Channel() {
+    // todo Channel应该负责关闭close吗
+    loop->removeChannel(this);
 }
 
-void Channel::removeEvent(EventType event) {
-    if (event == EventType::READ) {
-        this->m_enableRead = false;
-    } else if (event == EventType::WRITE) {
-        this->m_enableWrite = false;
-    } else if (event == EventType::EXCEPTION) {
-        this->m_enableException = false;
+void Channel::enableEvent(EventType ev, Callback cb) {
+    if (ev == EventType::READ) {
+        this->enableRead = true;
+        this->handle_read_cb = cb;
+        // todo 如果loop是const，好像addChannel不能调用
+        loop->addChannel(this);
+    } else if (ev == EventType::WRITE) {
+        this->enableWrite = true; 
+        this->handle_write_cb = cb;
+        loop->addChannel(this);
     } else {
-        FATAL("event type error");
+        // todo 异常是如何实现，使用异常会带来怎样的开销
+        throw;
     }
 }
 
-void Channel::activateEvent(EventType event) {
-    if (event == EventType::READ) {
-        assertm(m_enableRead);
-        m_activateRead = true;
-    } else if (event == EventType::WRITE) {
-        assertm(m_enableWrite);
-        m_activateWrite = true;
-    } else if (event == EventType::EXCEPTION) {
-        assertm(m_enableException); 
-        m_activateException = true;
+void Channel::disableEvent(EventType ev) {
+    if (ev == EventType::READ) {
+        this->enableRead = false;
+        loop->updateChannel(this);
+    } else if (ev == EventType::WRITE) {
+        this->enableWrite = false;;
+        loop->updateChannel(this);
     } else {
-        FATAL("event type error");
-    }
-
-}
-
-bool Channel::isEnableEvent(EventType event) const {
-    if (event == EventType::READ) {
-        return this->m_enableRead;
-    } else if (event == EventType::WRITE) {
-        return this->m_enableWrite;
-    } else if (event == EventType::EXCEPTION) {
-        return this->m_enableException;
-    } else {
-        FATAL("event type error");
-        return false;
+        throw;
     }
 }
 
 void Channel::handleEvent() {
-    if (m_activateRead) {
-        m_readCallback();
+    if (activateRead) {
+        this->handle_read_cb();
+        activateRead = false;
     }
-    if (m_activateWrite) {
-        m_writeCallback();
+    if (activateWrite) {
+        this->handle_write_cb();
+        activateWrite = false;
     }
-    if (m_activateException) {
-        m_exceptionCallback();
-    }
-    m_activateRead = false;
-    m_activateWrite = false;
-    m_activateException = false;
-}
-
-fd_t Channel::getFd() {
-    return m_fd;
 }
 
