@@ -1,10 +1,13 @@
 #include "base.h"
+#include "EventloopPool.h"
+#include "Acceptor.h"
+#include "TcpConnection.h"
 using namespace std;
 
 
 class TcpServer: public noncopyable {
 public:
-    TcpServer(const string& ip, port_t port, int n_thread);
+    TcpServer(const string& ip, port_t port, int n_thread = 0);
     ~TcpServer() = default;
 
     void run();
@@ -19,8 +22,8 @@ private:
     const string ip;
     port_t port;
     unique_ptr<EventloopPool> loop_pool;
-    Eventloop* loop;
-    std::unique_ptr<Acceptor> acceptor;
-    std::map<fd_t, std::unique_ptr<TcpConnection>> conn_map;
+    Eventloop* main_loop;
+    unique_ptr<Acceptor> acceptor;
+    map<fd_t, std::unique_ptr<TcpConnection>> conn_map;
     list<fd_t> remove_conn_set;
 };

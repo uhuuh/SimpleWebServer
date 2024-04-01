@@ -11,26 +11,30 @@
 TcpServer:: TcpServer(const string& ip, port_t port, int n_thread):
     ip(ip),
     port(port),
-    loop_pool(new EventloopPool(n_thread)),
-    loop(loop_pool->getLoop())
+    main_loop(new Eventloop()) // 需要一个main loop阻塞主线程
 {
+    if (n_thread != 0) {
+        loop_pool = make_unique<EventloopPool>(n_thread);
+    }
 }
 
 void TcpServer::run() {
-    LOG_TRACE << "run";
-    acceptor.reset(new Acceptor(
-        loop_pool->getLoop(), 
+    acceptor = make_unique<Acceptor>(
+        main_loop, 
         [this](auto fd, auto peer_ip, auto peer_port){this->create_conn(fd, peer_ip, peer_port);}, 
         ip, 
         port
-    ));
+    );
+
+    INFO(format("server_run | id: {}, ip: {}, port: {}", main_loop->thread_id, ip, port));
+    main_loop->run();
 }
 
 void TcpServer::create_conn(fd_t fd, const string& peer_ip, const int peer_port) {
     auto cb = [this, fd, peer_ip, peer_port]() {
         assertm(conn_map.find(fd) == conn_map.end());
 
-        auto loop = loop_pool->getLoop();
+        auto loop = loop_pool ? loop_pool->getLoop() : main_loop;
         conn_map[fd] = std::make_unique<TcpConnection>(
             loop,
             fd, 
@@ -44,7 +48,9 @@ void TcpServer::create_conn(fd_t fd, const string& peer_ip, const int peer_port)
             [this](auto fd){this->remove_conn(fd);}
         );
     };
-    loop->addCallback(cb);
+
+    INFO(format("create_conn | fd: {}, peer_id: {}, peer_port: {}", fd, peer_ip, peer_port));
+    main_loop->addCallback(cb);
 }
 
 void TcpServer::remove_conn(fd_t fd) {
@@ -64,7 +70,9 @@ void TcpServer::remove_conn(fd_t fd) {
             }
         }
     };
-    loop->addCallback(cb);
+
+    INFO(format("remove_conn | fd: {}", fd));
+    main_loop->addCallback(cb);
 }
 
 

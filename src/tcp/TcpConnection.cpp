@@ -2,6 +2,9 @@
 #include "Channel.h"
 #include "EventLoop.h"
 #include "Buffer.h"
+#include "Logger.h"
+#include "base.h"
+#include <memory>
 #include <unistd.h>
 #include <sys/socket.h>
 
@@ -18,8 +21,7 @@ TcpConnection::TcpConnection(
     UserMessageCallback message_cb,
     RemoveConnectionCallback remove_conn_cb
 ):
-    loop(loop),
-    fd(fd),
+    Channel(loop, fd),
     local_ip(local_ip),
     local_port(local_port),
     peer_ip(peer_ip),
@@ -30,7 +32,12 @@ TcpConnection::TcpConnection(
     remove_conn_cb(remove_conn_cb),
     state(TcpConnectionState::CONNECTING)
 {
-    ch->enableEvent(EventType::READ, [this]{handle_read();});
+    write_buf = make_unique<Buffer>();
+    read_buf = make_unique<Buffer>();
+
+    addEvent(EventType::READ, [this]{handle_read();});
+    addEvent(EventType::WRITE, [this]{handle_write();});
+    disableEvent(EventType::WRITE);
 
     // todo 为什么this指针可以调用private成员函数
     if (open_cb) {
@@ -47,29 +54,37 @@ void TcpConnection::shutdown() {
     if (state == TcpConnectionState::READ_CLOSE) {
         state = TcpConnectionState::CLOSE;
         if (close_cb) close_cb(this);
-        ch->disableEvent(EventType::WRITE);
+        disableEvent(EventType::WRITE);
         remove_conn_cb(fd);
     } else {
         state = TcpConnectionState::WRITE_CLOSE;
-        ch->disableEvent(EventType::WRITE);
+        disableEvent(EventType::WRITE);
     }
 }
 
 
-void TcpConnection::send(const std::string msg) {
+void TcpConnection::send(const std::string& msg) {
     assertm(state == TcpConnectionState::CONNECTING);
 
-    in_buf->push(msg);
-    ch->enableEvent(EventType::WRITE, [this]{handle_write();});
-}
-
-TcpConnection::~TcpConnection() {
-    ::close(fd);
+    write_buf->push(msg);
+    enableEvent(EventType::WRITE);
 }
 
 void TcpConnection::handle_read() {
-    auto n = out_buf->pushFrom(fd);
+    assertm(loop->isInSameThread());
+
+    auto n = read_buf->pushFrom(fd);
     if (n == 0) {
+        if (state == TcpConnectionState::WRITE_CLOSE) {
+            state = TcpConnectionState::CLOSE;
+            disableEvent(EventType::READ);
+
+            if (close_cb) close_cb(this);
+            remove_conn_cb(fd);
+        } else {
+            state = TcpConnectionState::READ_CLOSE;
+            disableEvent(EventType::READ);
+        }
 
     } else if (n < 0) {
         switch(errno) {
@@ -80,28 +95,34 @@ void TcpConnection::handle_read() {
 
                 if (state == TcpConnectionState::WRITE_CLOSE) {
                     state = TcpConnectionState::CLOSE;
+                    disableEvent(EventType::READ);
+
                     if (close_cb) close_cb(this);
-                    ch->disableEvent(EventType::READ);
                     remove_conn_cb(fd);
                 } else {
                     state = TcpConnectionState::READ_CLOSE;
-                    ch->disableEvent(EventType::READ);
+                    disableEvent(EventType::READ);
                 }
         }
     } else {
         if (message_cb) {
-            message_cb(this, out_buf.get());
+            message_cb(this, read_buf.get());
+        } else {
+            // 没有message_cb处理buf中的数据，这里pop，防止堆积
+            read_buf->pop();
         }
     }
 }
 
 void TcpConnection::handle_write() {
+    assertm(loop->isInSameThread());
+
     // todo logger 如何打印出堆栈
-    assertm(in_buf->getSize() > 0);
+    assertm(write_buf->getSize() > 0);
 
-    in_buf->popTo(fd);
+    write_buf->popTo(fd);
 
-    if (in_buf->getSize() == 0) {
-        ch->disableEvent(EventType::WRITE);
+    if (write_buf->getSize() == 0) {
+        disableEvent(EventType::WRITE);
     }
 }

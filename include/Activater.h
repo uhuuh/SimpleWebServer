@@ -1,15 +1,13 @@
 #pragma once
+#include "EventLoop.h"
 #include "base.h"
+#include "Channel.h"
 
 
-class Activater: public noncopyable {
+class Activater: public Channel {
 public:
     Activater(Eventloop* loop);
-    ~Activater();
     void activate();
 private:
-    Eventloop* loop;
-    unique_ptr<Channel> ch;
-    fd_t fd;
     void handle_read();
 };

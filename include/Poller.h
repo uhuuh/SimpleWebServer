@@ -6,10 +6,9 @@
 class Poller: noncopyable {
 public:
     Poller();
-    ~Poller() = default;
+    ~Poller();
 
     void addChannel(Channel* ch);
-    void updateChannel(Channel* ch);
     void removeChannel(Channel* ch);
     void poll();
 private:
@@ -18,5 +17,5 @@ private:
     int time_fd;
     set<int> fd_set;
     vector<epoll_event> event_list;
-    static const int timeout_ms = 1000; 
+    static const int timeout_ms = 1000 * 3; 
 };

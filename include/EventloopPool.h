@@ -10,6 +10,8 @@ public:
 private:
     vector<unique_ptr<Eventloop>> loop_list;
     vector<thread> thread_list;
+    mutex mu;
+    condition_variable cv;
     const int n_thread;
     int next_i;
 };

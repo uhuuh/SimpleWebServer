@@ -4,30 +4,33 @@
 #include "EventloopPool.h"
 #include "TcpConnection.h"
 #include "Channel.h"
+#include "base.h"
+#include <memory>
 
 
 TcpClient::TcpClient(const string& ip, port_t port):
     ip(ip),
     port(port),
-    loop_pool(new EventloopPool(1)),
-    loop(loop_pool->getLoop())
+    main_loop(new Eventloop())
 {
 }
 
 void TcpClient::run() {
-    LOG_TRACE << "run";
     // todo 优化下面的lambda，使用bind试试看
-    connector.reset(new Connector(
-        loop,
+    connector = make_unique<Connector>(
+        main_loop,
         [this](auto fd, auto ip, auto port){this->create_conn(fd, ip, port);},
         ip,
         port
-    ));
+    );
+
+    INFO(format("client_run | id: {}, ip: {}, port: {}", main_loop->thread_id, ip, port));
+    main_loop->run();
 }
 
 void TcpClient::create_conn(fd_t fd, const string& peer_ip, const int peer_port) {
     auto cb = [this, fd, peer_ip, peer_port]() {
-        auto loop = loop_pool->getLoop();
+        auto loop = main_loop;
         conn = std::make_unique<TcpConnection>(
             loop,
             fd, 
@@ -41,7 +44,7 @@ void TcpClient::create_conn(fd_t fd, const string& peer_ip, const int peer_port)
             [this](auto fd){this->remove_conn(fd);}
         );
     };
-    loop->addCallback(cb);
+    main_loop->addCallback(cb);
 }
 
 void TcpClient::remove_conn(fd_t fd) {

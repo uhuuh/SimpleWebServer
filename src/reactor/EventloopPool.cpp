@@ -1,5 +1,7 @@
 #include "EventloopPool.h"
 #include "Eventloop.h"
+#include <chrono>
+#include <thread>
 
 
 EventloopPool::EventloopPool(int n_thread):
@@ -9,21 +11,22 @@ EventloopPool::EventloopPool(int n_thread):
     loop_list(n_thread)
 {
     for (int i = 0; i < n_thread; ++i) {
-        auto loop = new Eventloop();
-        loop_list[i].reset(loop);
-        thread_list[i] = thread([loop]() {
-            loop->run();
+        thread_list[i] = thread([this, i] () {
+            loop_list[i] = make_unique<Eventloop>();
+            loop_list[i]->run();
         });
     }
 
     while (true) {
-        int n = 0;
+        int acc = 0;
         for (int i = 0; i < n_thread; ++i) {
-            if (loop_list[i]->is_loop) {
-                n += 1;
+            if (loop_list[i] && loop_list[i]->is_loop) {
+                acc += 1;
             }
         }
-        if (n >= n_thread) break;  
+        if (acc == n_thread) break;
+
+        this_thread::sleep_for(chrono::milliseconds(10));
     }
 }
 

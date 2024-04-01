@@ -1,17 +1,17 @@
 #pragma once
+#include "EventLoop.h"
 #include "base.h"
+#include "Channel.h"
+#include <mutex>
 
 
-class TimerQueue: public noncopyable {
+class TimerQueue: public Channel {
 public:
-    TimerQueue(Eventloop* loop);
-    ~TimerQueue();
+    TimerQueue(Eventloop *loop);
     TimerId addTimer(Callback cb, TimeStamp at);
     void cancelTimer(TimerId id);
 private:
-    Eventloop* loop;
-    fd_t fd;
-    unique_ptr<Channel> ch;
-    std::multimap<TimeStamp, Callback> timer_map;
+    multimap<TimeStamp, Callback> timer_map;
+    mutex mu;
     void handle_read();
 };

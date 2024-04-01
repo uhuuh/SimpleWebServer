@@ -1,10 +1,8 @@
 #pragma once
 
+#include <cstdint>
 #include <iostream>
 #include <cstdio>
-
-#include <memory>
-#include <functional>
 
 #include <string>
 #include <map>
@@ -13,9 +11,12 @@
 #include <set>
 #include <algorithm>
 
-
+#include <memory>
+#include <functional>
 #include <thread>
 #include <mutex>
+#include <condition_variable>
+#include <chrono>
 
 #include "Logger.h"
 
@@ -56,6 +57,6 @@ using CreateConnectionCallback = std::function<void(fd_t, const string&, const i
 using RemoveConnectionCallback = std::function<void(fd_t)>;
 
 using TimeStamp = uint64_t;
-using TimerId = std::multimap<TimeStamp, Callback>::iterator;
-
+using TimerId = uint64_t;
+// using TimerId = std::multimap<TimeStamp, Callback>::iterator;
 

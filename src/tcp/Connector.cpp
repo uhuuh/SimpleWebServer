@@ -10,18 +10,16 @@ Connector::Connector(
     const std::string& ip,
     in_port_t port
 ):
-    loop(loop),
+    Channel(loop, socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, IPPROTO_TCP)),
     create_conn_cb(create_conn_cb),
     ip(ip),
     port(port)
 {
+    loop->addCallback([this](){this->connect();});
 }
 
 
 void Connector::connect() {
-    fd = ::socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, IPPROTO_TCP);
-    assertm(fd >= 0);
-
     struct sockaddr_in addr;
     memset(&addr, 0, sizeof(addr));
     addr.sin_family = AF_INET;
@@ -29,11 +27,13 @@ void Connector::connect() {
     inet_pton(AF_INET, ip.c_str(), &addr.sin_addr);
 
     // todo ::的作用
-    auto ret = ::connect(fd,  (struct sockaddr *)&addr, sizeof(addr)); 
+    // todo connect 是否可以使用poll监听
+    auto ret = ::connect(fd,  (struct sockaddr *)&addr, sizeof(addr));
     if (ret < 0) {
         auto cb = [this]() {
             this->connect();
         };
+
         if (retry_delay_ms <= max_retry_delay_ms) {
             loop->addTimer(cb, retry_delay_ms);
             retry_delay_ms *= 2;
@@ -44,5 +44,4 @@ void Connector::connect() {
         create_conn_cb(fd, ip, port);
     }
 }
-
 

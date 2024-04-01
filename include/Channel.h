@@ -1,4 +1,5 @@
 #pragma once
+#include "EventLoop.h"
 #include "base.h"
 
 enum class EventType  {
@@ -8,10 +9,11 @@ enum class EventType  {
 
 class Channel: noncopyable {
 public:
-    Channel(Eventloop*, int);
+    Channel(Eventloop*, fd_t);
     ~Channel();
 
-    void enableEvent(EventType, Callback);
+    void addEvent(EventType, Callback);
+    void enableEvent(EventType);
     void disableEvent(EventType);
     void handleEvent();
 
@@ -20,8 +22,9 @@ public:
     bool enableRead = false;
     bool enableWrite = false;
     const fd_t fd = -1;
+protected:
+    Eventloop * const loop = nullptr;
 private:
-    Eventloop *loop = nullptr;
     Callback handle_read_cb;
     Callback handle_write_cb;
 };

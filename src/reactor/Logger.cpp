@@ -1,11 +1,14 @@
 #include "Logger.h"
 #include <cstdarg>
 #include <sstream>
+#include <string>
+#include <vector>
+using namespace std;
+
 
 void assertm(bool res) {
     if (!res) {
         if (errno != 0) {
-            // printf("assert error: %s\n", strerror(errno));
             throw std::runtime_error(strerror(errno));
         } else {
             throw std::runtime_error("");
@@ -39,17 +42,14 @@ void check_execption(std::function<void()> cb, const char* correct_msg, const ch
     }
 }
 
-void FATAL(const char* msg) {
-    printf("%s\n", msg);
+void FATAL(const string& msg) {
+    cout << msg << endl;
     exit(-1);
 }
 
-void INFO(const char* msg) {
-    printf("%s\n", msg);
-}
-
-void DEBUG(const char* msg) {
-    printf("%s\n", msg);
+void INFO(const string& msg) {
+    // 带上调用栈，行名
+    cout << msg << endl;
 }
 
 
