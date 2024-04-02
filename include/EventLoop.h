@@ -10,8 +10,10 @@ public:
     void run();
     void quit();
 
-    bool addCallback(Callback cb); // 立刻执行返回true
     bool isInSameThread();
+    bool addCallback(Callback cb); // 立刻执行返回true
+    void addCallbackNow(Callback cb); // 立刻执行返回true
+    void addCallbackAfter(Callback cb);
     TimerId addTimer(Callback cb, TimeStamp delay_ms);
     void cancelTimer(TimerId id);
 

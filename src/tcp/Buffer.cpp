@@ -2,7 +2,7 @@
 #include <unistd.h>
 
 
-uint32_t Buffer::pushFrom(fd_t fd) {
+int Buffer::pushFrom(fd_t fd) {
     auto remainRight = buf.capacity() - right_write_ptr;
     // todo 通过readv结果, 如果结果在栈空间上则自动扩容
     if (remainRight < init_capa / 2) {
@@ -12,24 +12,24 @@ uint32_t Buffer::pushFrom(fd_t fd) {
     auto n = ::read(fd, begin() + right_write_ptr, remainRight);
     if (n > 0) {
         right_write_ptr += n;
-        return static_cast<uint32_t>(n);
+        return static_cast<int>(n);
     } else {
         return n;
     }
 }
 
-uint32_t  Buffer::popTo(fd_t fd) {
+int  Buffer::popTo(fd_t fd) {
     auto n = ::write(fd, begin() + left_read_ptr, getSize());
     if (n > 0) {
         left_read_ptr += n;
-        return static_cast<uint32_t>(n);
+        return static_cast<int>(n);
     } else {
         return n;
     }
 }
 
 
-uint32_t Buffer::getSize() {
+int Buffer::getSize() {
     return right_write_ptr - left_read_ptr;
 }
 
@@ -44,7 +44,7 @@ char *Buffer::begin() {
 }
 
 std::string_view Buffer::peek() {
-    return {begin() + left_read_ptr, getSize()};
+    return {begin() + left_read_ptr, static_cast<unsigned long>(getSize())};
 }
 
 void Buffer::pop() { // 弹出左边的

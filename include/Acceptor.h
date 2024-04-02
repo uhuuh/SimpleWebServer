@@ -10,5 +10,5 @@ private:
 
     CreateConnectionCallback create_conn_cb;
     const string ip;
-    port_t port;
+    const port_t port;
 };

@@ -17,9 +17,12 @@ TcpClient::TcpClient(const string& ip, port_t port):
 
 void TcpClient::run() {
     // todo 优化下面的lambda，使用bind试试看
+    auto cb = [this] (auto fd, auto ip, auto port) {
+        this->create_conn(fd, ip, port);
+    };
     connector = make_unique<Connector>(
         main_loop,
-        [this](auto fd, auto ip, auto port){this->create_conn(fd, ip, port);},
+        cb,
         ip,
         port
     );
@@ -28,9 +31,12 @@ void TcpClient::run() {
     main_loop->run();
 }
 
-void TcpClient::create_conn(fd_t fd, const string& peer_ip, const int peer_port) {
+void TcpClient::create_conn(fd_t fd, const string peer_ip, const int peer_port) {
     auto cb = [this, fd, peer_ip, peer_port]() {
         auto loop = main_loop;
+        auto cb = [this] () {
+            this->remove_conn();
+        };
         conn = std::make_unique<TcpConnection>(
             loop,
             fd, 
@@ -41,14 +47,15 @@ void TcpClient::create_conn(fd_t fd, const string& peer_ip, const int peer_port)
             openCallback,
             closeCallback,
             messageCallback,
-            [this](auto fd){this->remove_conn(fd);}
+            cb
         );
     };
     main_loop->addCallback(cb);
 }
 
-void TcpClient::remove_conn(fd_t fd) {
-    // pass
+void TcpClient::remove_conn() {
+    // client销毁的同时也销毁conn
+    main_loop->quit();
 }
 
 

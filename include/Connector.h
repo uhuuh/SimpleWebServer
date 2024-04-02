@@ -12,11 +12,11 @@ public:
     void _retry();
 
 private:
-    void connect();
+    void connect_peer();
     void handle_read();
 
     const string ip;
-    port_t port;
+    const port_t port;
     CreateConnectionCallback create_conn_cb;
 
     int retry_delay_ms = 500;

@@ -12,8 +12,8 @@ message("[debug] files_lib: ${files_lib}")
 
 file(GLOB files "src/**/*.cpp")
 message("[deubg] files: ${files}")
-# add_executable(test_loop test/test_loop.cpp ${files} ${files_lib})
-# add_executable(test_server test/test_server.cpp ${files} ${files_lib})
+add_executable(test_loop test/test_loop.cpp ${files} ${files_lib})
+add_executable(test_server test/test_server.cpp ${files} ${files_lib})
 add_executable(test_client test/test_client.cpp ${files} ${files_lib})
 
 get_property(include_dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)

@@ -1,6 +1,7 @@
 #include "Connector.h"
 #include "Channel.h"
 #include "EventLoop.h"
+#include "Logger.h"
 #include <arpa/inet.h>
 
 
@@ -15,11 +16,13 @@ Connector::Connector(
     ip(ip),
     port(port)
 {
-    loop->addCallback([this](){this->connect();});
+    loop->addCallback([this](){this->connect_peer();});
 }
 
 
-void Connector::connect() {
+void Connector::connect_peer() {
+    assertm(loop->isInSameThread());
+
     struct sockaddr_in addr;
     memset(&addr, 0, sizeof(addr));
     addr.sin_family = AF_INET;
@@ -28,10 +31,10 @@ void Connector::connect() {
 
     // todo ::的作用
     // todo connect 是否可以使用poll监听
-    auto ret = ::connect(fd,  (struct sockaddr *)&addr, sizeof(addr));
+    auto ret = connect(fd,  (struct sockaddr *)&addr, sizeof(addr));
     if (ret < 0) {
         auto cb = [this]() {
-            this->connect();
+            this->connect_peer();
         };
 
         if (retry_delay_ms <= max_retry_delay_ms) {

@@ -15,8 +15,8 @@ public:
     UserCloseCallback closeCallback;
     UserMessageCallback messageCallback;
 private:
-    void create_conn(fd_t fd, const string& peer_ip, const int peer_port);
-    void remove_conn(fd_t fd);
+    void create_conn(fd_t fd, const string peer_ip, const int peer_port);
+    void remove_conn();
 
     Eventloop* main_loop;
     const string host;

@@ -42,22 +42,32 @@ void Eventloop::run() {
 
 bool Eventloop::addCallback(Callback cb) {
     INFO("add_cb");
-    if (gettid() == thread_id && is_loop) {
-        // 有时候loop没启动时，可能添加callback 
-        // Eventloop内部调用时的情况，比如timerqueue取消其Channel。如果没有这一个分支，内部调用cb时永远得不到执行
-        cb();
+    // 有时候loop没启动时，可能添加callback 
+    // Eventloop内部调用时的情况，比如timerqueue取消其Channel。如果没有这一个分支，内部调用cb时永远得不到执行
+    if (isInSameThread()) {
+        addCallbackNow(cb);
         return true;
     } else {
-        {
-            std::lock_guard lock(mu);
-            cb_list.push_back(cb);
-        }
-        if (is_loop) {
-            activater->activate();
-        }
+        addCallbackAfter(cb);
+        return false;
     }
-    return false;
 }
+
+void Eventloop::addCallbackNow(Callback cb) {
+    assertm(isInSameThread());
+    cb();
+}
+
+void Eventloop::addCallbackAfter(Callback cb) {
+    {
+        std::lock_guard lock(mu);
+        cb_list.push_back(cb);
+    }
+    if (is_loop) {
+        activater->activate();
+    }
+}
+
 
 bool Eventloop::isInSameThread() {
     auto now_id = gettid();

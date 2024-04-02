@@ -51,17 +51,9 @@ TcpConnection::TcpConnection(
 void TcpConnection::shutdown() {
     assertm(::shutdown(fd, SHUT_WR));
 
-    if (state == TcpConnectionState::READ_CLOSE) {
-        state = TcpConnectionState::CLOSE;
-        if (close_cb) close_cb(this);
-        disableEvent(EventType::WRITE);
-        remove_conn_cb(fd);
-    } else {
-        state = TcpConnectionState::WRITE_CLOSE;
-        disableEvent(EventType::WRITE);
-    }
+    // 我方关闭写端
+    change_state(TcpConnectionState::WRITE_CLOSE);
 }
-
 
 void TcpConnection::send(const std::string& msg) {
     assertm(state == TcpConnectionState::CONNECTING);
@@ -70,39 +62,51 @@ void TcpConnection::send(const std::string& msg) {
     enableEvent(EventType::WRITE);
 }
 
+void TcpConnection::change_state(TcpConnectionState next_state) {
+    if (state == TcpConnectionState::READ_CLOSE && next_state == TcpConnectionState::WRITE_CLOSE) {
+        state = TcpConnectionState::CLOSE;
+    } else if (state == TcpConnectionState::WRITE_CLOSE && next_state == TcpConnectionState::READ_CLOSE) {
+        state = TcpConnectionState::CLOSE;
+    } else if (state == next_state) {
+        throw;
+    } else {
+        state = next_state;
+    }
+
+    if (next_state == TcpConnectionState::CLOSE) {
+        disableEvent(EventType::READ);
+        disableEvent(EventType::WRITE);
+
+        if (close_cb) close_cb(this);
+
+        // 如何conn与server在不同的loop，避免自己运行的时候删除自己
+        loop->addCallbackAfter(remove_conn_cb);
+    } else if (next_state == TcpConnectionState::READ_CLOSE) {
+        disableEvent(EventType::READ);
+    } else if (next_state == TcpConnectionState::WRITE_CLOSE) {
+        disableEvent(EventType::WRITE);
+    } else if (next_state == TcpConnectionState::CONNECTING) {
+        throw;
+    } else {
+        throw;
+    }
+}
+
 void TcpConnection::handle_read() {
     assertm(loop->isInSameThread());
 
     auto n = read_buf->pushFrom(fd);
     if (n == 0) {
-        if (state == TcpConnectionState::WRITE_CLOSE) {
-            state = TcpConnectionState::CLOSE;
-            disableEvent(EventType::READ);
-
-            if (close_cb) close_cb(this);
-            remove_conn_cb(fd);
-        } else {
-            state = TcpConnectionState::READ_CLOSE;
-            disableEvent(EventType::READ);
-        }
-
+        // 对方关闭连接 
+        change_state(TcpConnectionState::CLOSE);
     } else if (n < 0) {
         switch(errno) {
             case EAGAIN:
             case EINTR:
                 return;
             default:
-
-                if (state == TcpConnectionState::WRITE_CLOSE) {
-                    state = TcpConnectionState::CLOSE;
-                    disableEvent(EventType::READ);
-
-                    if (close_cb) close_cb(this);
-                    remove_conn_cb(fd);
-                } else {
-                    state = TcpConnectionState::READ_CLOSE;
-                    disableEvent(EventType::READ);
-                }
+                // 对方关闭读端
+                change_state(TcpConnectionState::READ_CLOSE);
         }
     } else {
         if (message_cb) {

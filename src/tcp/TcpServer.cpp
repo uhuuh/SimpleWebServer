@@ -19,9 +19,12 @@ TcpServer:: TcpServer(const string& ip, port_t port, int n_thread):
 }
 
 void TcpServer::run() {
+    auto cb = [this] (auto fd, auto peer_ip, auto peer_port) {
+        this->create_conn(fd, peer_ip, peer_port);
+    };
     acceptor = make_unique<Acceptor>(
         main_loop, 
-        [this](auto fd, auto peer_ip, auto peer_port){this->create_conn(fd, peer_ip, peer_port);}, 
+        cb, 
         ip, 
         port
     );
@@ -30,11 +33,14 @@ void TcpServer::run() {
     main_loop->run();
 }
 
-void TcpServer::create_conn(fd_t fd, const string& peer_ip, const int peer_port) {
+void TcpServer::create_conn(fd_t fd, const string peer_ip, const int peer_port) {
     auto cb = [this, fd, peer_ip, peer_port]() {
         assertm(conn_map.find(fd) == conn_map.end());
 
         auto loop = loop_pool ? loop_pool->getLoop() : main_loop;
+        auto cb = [this, fd] () {
+            this->remove_conn(fd);
+        };
         conn_map[fd] = std::make_unique<TcpConnection>(
             loop,
             fd, 
@@ -45,34 +51,23 @@ void TcpServer::create_conn(fd_t fd, const string& peer_ip, const int peer_port)
             openCallback,
             closeCallback,
             messageCallback,
-            [this](auto fd){this->remove_conn(fd);}
+            cb
         );
+
+        INFO(format("create_conn | fd: {}, peer_id: {}, peer_port: {}", fd, peer_ip, peer_port));
     };
 
-    INFO(format("create_conn | fd: {}, peer_id: {}, peer_port: {}", fd, peer_ip, peer_port));
     main_loop->addCallback(cb);
 }
 
 void TcpServer::remove_conn(fd_t fd) {
     auto cb = [this, fd] {
-        remove_conn_set.push_back(fd);
+        auto iter = this->conn_map.find(fd);
+        this->conn_map.erase(iter); 
 
-        for (auto p = remove_conn_set.begin(); p != remove_conn_set.end(); ) {
-            auto remove_fd = *p;
-            if (conn_map[remove_fd]->state == TcpConnectionState::CLOSE) {
-                conn_map.erase(remove_fd);
-                p = remove_conn_set.erase(p);
-            } else if (remove_fd == fd) {
-                // 与tcpconnection同一个loop时，tcpconnection内调用remove_conn删除自己。这里跳过，等待下次删除
-                ++p;
-            } else {
-                ++p;
-            }
-        }
+        INFO(format("remove_conn | fd: {}", fd));
     };
 
-    INFO(format("remove_conn | fd: {}", fd));
     main_loop->addCallback(cb);
 }
-
 

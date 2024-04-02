@@ -43,20 +43,20 @@ void Poller::addChannel(Channel* ch) {
 }
 
 void Poller::removeChannel(Channel *ch) {
-    fd_set.erase(ch->fd);
+    assertm(fd_set.find(ch->fd) != fd_set.end());
+
     epoll_event ev;
     assertm(epoll_ctl(epoll_fd, EPOLL_CTL_DEL, ch->fd, &ev) >= 0);
+
+    fd_set.erase(ch->fd);
 
     INFO(format("remove_channel | fd: {}, need_read: {}, need_write: {}", ch->fd, ch->enableRead, ch->enableWrite));
 }
 
 void Poller::poll() {
     // 当event_list扩容时，&event_list.front()的地址发生在epoll_wait之外，故epoll_wait不会有影响
-    struct epoll_event event_list[100];
-    int n_event = epoll_wait(epoll_fd, event_list, 100, timeout_ms);
-
-    // auto p = reinterpret_cast<struct epoll_event*>(&event_list.front());
-    // int n_event = epoll_wait(epoll_fd, p, event_list.size(), timeout_ms);
+    auto p = reinterpret_cast<struct epoll_event*>(&event_list.front());
+    int n_event = epoll_wait(epoll_fd, p, event_list.size(), timeout_ms);
     if (n_event == -1) {
         switch (errno) {
             case EINTR: // todo

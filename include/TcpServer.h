@@ -16,14 +16,13 @@ public:
     UserCloseCallback closeCallback;
     UserMessageCallback messageCallback;
 private:
-    void create_conn(fd_t fd, const string& peer_ip, const int peer_port);
+    void create_conn(fd_t fd, const string peer_ip, const int peer_port);
     void remove_conn(fd_t fd);
 
     const string ip;
-    port_t port;
+    const port_t port;
     unique_ptr<EventloopPool> loop_pool;
     Eventloop* main_loop;
     unique_ptr<Acceptor> acceptor;
     map<fd_t, std::unique_ptr<TcpConnection>> conn_map;
-    list<fd_t> remove_conn_set;
 };

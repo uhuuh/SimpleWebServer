@@ -14,8 +14,9 @@ Channel::Channel(Eventloop *loop, fd_t fd): loop(loop), fd(fd)
 }
 
 Channel::~Channel() {
-    close(fd);
+    // 好像epoll清除fd时确保fd时完好的，故县epoll清除再close
     loop->removeChannel(this);
+    close(fd);
 }
 
 void Channel::addEvent(EventType ev, Callback cb) {

@@ -2,12 +2,12 @@
 #include "Channel.h"
 #include "Buffer.h"
 #include "base.h"
+#include <memory>
 
 enum class TcpConnectionState {
     CONNECTING,
     READ_CLOSE,
     WRITE_CLOSE,
-    DISCONNECT,
     CLOSE
 };
 
@@ -31,22 +31,21 @@ public:
     void send(const std::string& msg);
     void shutdown();
 
-    void beforeDestroy(std::shared_ptr<TcpConnection> conn);
+    TcpConnectionState state;
+    const string local_ip;
+    const int local_port;
+    const string peer_ip;
+    const int peer_port;
+private:
     void handle_read();
     void handle_write();
+    void change_state(TcpConnectionState);
 
     UserOpenCallback open_cb;
     UserCloseCallback close_cb;
     UserMessageCallback message_cb;
     RemoveConnectionCallback remove_conn_cb;
 
-    const string& local_ip;
-    const int local_port;
-    const string& peer_ip;
-    const int peer_port;
-
     std::unique_ptr<Buffer> write_buf;
     std::unique_ptr<Buffer> read_buf;
-
-    TcpConnectionState state;
 };

@@ -53,8 +53,8 @@ using UserOpenCallback = std::function<void(TcpConnection*)>;
 using UserCloseCallback = std::function<void(TcpConnection*)>;
 using UserMessageCallback = std::function<void(TcpConnection*, Buffer*)>;
 
-using CreateConnectionCallback = std::function<void(fd_t, const string&, const int)>;
-using RemoveConnectionCallback = std::function<void(fd_t)>;
+using CreateConnectionCallback = std::function<void(fd_t, string, int)>;
+using RemoveConnectionCallback = std::function<void(void)>;
 
 using TimeStamp = uint64_t;
 using TimerId = uint64_t;
