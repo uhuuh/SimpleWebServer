@@ -40,6 +40,7 @@ private:
     void handle_read();
     void handle_write();
     void change_state(TcpConnectionState);
+    void shutdown_conn_if();
 
     UserOpenCallback open_cb;
     UserCloseCallback close_cb;

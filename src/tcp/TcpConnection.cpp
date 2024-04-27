@@ -39,7 +39,6 @@ TcpConnection::TcpConnection(
     addEvent(EventType::WRITE, [this]{handle_write();});
     disableEvent(EventType::WRITE);
 
-    // todo 为什么this指针可以调用private成员函数
     if (open_cb) {
         auto cb = [this] {
             this->open_cb(this);
@@ -49,9 +48,8 @@ TcpConnection::TcpConnection(
 }
 
 void TcpConnection::shutdown() {
-    assertm(::shutdown(fd, SHUT_WR));
-
     // 我方关闭写端
+    INFO(format("conn_write_close: fd: {}", fd));
     change_state(TcpConnectionState::WRITE_CLOSE);
 }
 
@@ -64,48 +62,38 @@ void TcpConnection::send(const std::string& msg) {
 
 void TcpConnection::change_state(TcpConnectionState next_state) {
     if (state == TcpConnectionState::READ_CLOSE && next_state == TcpConnectionState::WRITE_CLOSE) {
-        state = TcpConnectionState::CLOSE;
+        next_state = TcpConnectionState::CLOSE;
     } else if (state == TcpConnectionState::WRITE_CLOSE && next_state == TcpConnectionState::READ_CLOSE) {
-        state = TcpConnectionState::CLOSE;
-    } else if (state == next_state) {
-        throw;
-    } else {
-        state = next_state;
+        next_state = TcpConnectionState::CLOSE;
     }
+    state = next_state;
 
-    if (next_state == TcpConnectionState::CLOSE) {
+
+    if (state == TcpConnectionState::READ_CLOSE) {
         disableEvent(EventType::READ);
-        disableEvent(EventType::WRITE);
-
-        if (close_cb) close_cb(this);
-
-        // 如何conn与server在不同的loop，避免自己运行的时候删除自己
-        loop->addCallbackAfter(remove_conn_cb);
-    } else if (next_state == TcpConnectionState::READ_CLOSE) {
-        disableEvent(EventType::READ);
-    } else if (next_state == TcpConnectionState::WRITE_CLOSE) {
-        disableEvent(EventType::WRITE);
-    } else if (next_state == TcpConnectionState::CONNECTING) {
-        throw;
     } else {
-        throw;
+        shutdown_conn_if();
     }
 }
 
 void TcpConnection::handle_read() {
     assertm(loop->isInSameThread());
 
+    // note epoll有检测异常事件，但是不能直接知道是什么异常，通过read或者write返回-1，再根据errno可以知道是什么异常
     auto n = read_buf->pushFrom(fd);
     if (n == 0) {
         // 对方关闭连接 
+        INFO(format("conn_close | fd: {}", fd));
         change_state(TcpConnectionState::CLOSE);
     } else if (n < 0) {
         switch(errno) {
+            // todo
             case EAGAIN:
             case EINTR:
                 return;
             default:
                 // 对方关闭读端
+                INFO(format("conn_read_close: fd: {}", fd));
                 change_state(TcpConnectionState::READ_CLOSE);
         }
     } else {
@@ -127,6 +115,29 @@ void TcpConnection::handle_write() {
     write_buf->popTo(fd);
 
     if (write_buf->getSize() == 0) {
+        disableEvent(EventType::WRITE); 
+
+        shutdown_conn_if();
+    }
+}
+
+void TcpConnection::shutdown_conn_if() {
+    if (write_buf->getSize() != 0) return;
+
+    if (state == TcpConnectionState::CLOSE) {
         disableEvent(EventType::WRITE);
+        disableEvent(EventType::READ);
+        // note 由于我方只会关闭写端，故执行到此处连接已经关闭，无需再执行下面函数关闭连接
+        // assertm(::shutdown(fd, SHUT_RDWR) >= 0);
+        // assertm(::shutdown(fd, SHUT_RD) >= 0);
+        // assertm(::close(fd) >= 0);
+ 
+        if (close_cb) close_cb(this);
+
+        // note 防止在成员函数中执行delete this
+        loop->addCallbackAfter(remove_conn_cb);
+    } else if (state == TcpConnectionState::WRITE_CLOSE) {
+        disableEvent(EventType::WRITE);
+        assertm(::shutdown(fd, SHUT_WR) >= 0);
     }
 }

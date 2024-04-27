@@ -75,7 +75,7 @@ void Buffer::push(std::string_view str) {
         buf_move_head();
         buf_insert_tail(str);
     } else {
-        auto add = remain_left + remain_right - n;
+        auto add = n - remain_left + remain_right;
         buf.resize(buf.capacity() + add);
         buf_move_head();
         buf_insert_tail(str);

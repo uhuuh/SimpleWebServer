@@ -9,6 +9,7 @@
 #include <vector>
 #include <list>
 #include <set>
+#include <queue>
 #include <algorithm>
 
 #include <memory>
@@ -57,6 +58,13 @@ using CreateConnectionCallback = std::function<void(fd_t, string, int)>;
 using RemoveConnectionCallback = std::function<void(void)>;
 
 using TimeStamp = uint64_t;
-using TimerId = uint64_t;
+using TimerSeq = uint64_t;
+class Timer;
+struct TimerId {
+    TimeStamp ms;
+    TimerSeq seq;
+    Timer* timer;
+};
+
 // using TimerId = std::multimap<TimeStamp, Callback>::iterator;
 

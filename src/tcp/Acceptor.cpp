@@ -21,7 +21,7 @@ fd_t createListenFd(const string& ip, in_port_t port) {
     addr.sin_port = htons(port);
 
     assertm(bind(fd, reinterpret_cast<struct sockaddr *>(&addr), sizeof(addr)) >= 0);
-    assertm(listen(fd, -1) >= 0); // todo listen 队列最大值
+    assertm(listen(fd, SOMAXCONN) >= 0); // todo listen 队列最大值
 
     INFO(format("accept_init_listen | fd: {}", fd));
     return fd;

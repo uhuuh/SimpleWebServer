@@ -43,7 +43,8 @@ void Poller::addChannel(Channel* ch) {
 }
 
 void Poller::removeChannel(Channel *ch) {
-    assertm(fd_set.find(ch->fd) != fd_set.end());
+    // assertm(fd_set.find(ch->fd) != fd_set.end());
+    if (fd_set.find(ch->fd) == fd_set.end()) return;
 
     epoll_event ev;
     assertm(epoll_ctl(epoll_fd, EPOLL_CTL_DEL, ch->fd, &ev) >= 0);

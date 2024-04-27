@@ -9,7 +9,13 @@
 #include <sys/timerfd.h>
 #include <unistd.h>
 
-
+int timer_comp(const Timer* x, const Timer* y) {
+    if (x->id.ms != y->id.ms) {
+        return x->id.ms > y->id.ms;
+    } else {
+        return x->id.seq > y->id.seq;
+    }
+}
 
 TimeStamp get_now_timestamp() {
     // auto now = std::chrono::system_clock::now();
@@ -35,7 +41,7 @@ void read_timefd(fd_t fd) {
     assertm(n == sizeof(howmany));
 }
 
-TimerQueue::TimerQueue(Eventloop *loop): Channel(loop, timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CLOEXEC))
+TimerQueue::TimerQueue(Eventloop *loop): Channel(loop, timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CLOEXEC)), timer_queue(&timer_comp)
 {
     INFO(format("timer_queue_init | fd: {}", fd));
     addEvent(EventType::READ, [this](){this->handle_read();});
@@ -46,35 +52,30 @@ TimerId TimerQueue::addTimer(Callback cb, TimeStamp delay_ms) {
     lock_guard<mutex> guard(mu);
 
     auto at_ms = get_now_timestamp() + delay_ms;
-    bool flag_early = timer_map.size() == 0 ? true : at_ms < timer_map.begin()->first;
-
-    auto p = timer_map.insert({at_ms, cb});
-    --p; // insert返回的迭代器指向插入元素的下个元素
-    auto p2 = reinterpret_cast<long long*>(&p);
-    auto id = *p2;
-
-    if (flag_early) {
+    if (timer_queue.empty() || at_ms < timer_queue.top()->id.ms) {
+        enableEvent(EventType::READ);
         reset_timefd(fd, at_ms);
     }
 
-    if (enableRead == false) {
-        enableEvent(EventType::READ);
-    }
+    TimerId now_id{at_ms, timer_seq++, nullptr};
+    auto timer = new Timer{now_id, false, cb};
+    now_id.timer = timer;
 
-    INFO(format("add_timer | timer_id: {}, at: {}", id, at_ms));
-    return id;
+    timer_queue.push(timer);
+
+    return now_id;
 }
 
 void TimerQueue::cancelTimer(TimerId id) {
     lock_guard<mutex> gurad(mu);
 
-    using iter = decltype(timer_map)::iterator;
-    auto pp = reinterpret_cast<iter*>(&id);
-    auto p = *pp;
+    auto min_ms = timer_queue.top()->id.ms;
+    if (id.ms < min_ms) return;
+    if (id.ms == min_ms && id.seq < timer_seq) return;
 
-    timer_map.erase(p);
+    id.timer->stop = true;
 
-    INFO(format("cancel_timer | timer_id: {}", id));
+    INFO(format("cancel_timer | timer_ms: {}, timer_seq: {}", id.ms, id.seq));
 }
 
 void TimerQueue::handle_read() {
@@ -86,18 +87,20 @@ void TimerQueue::handle_read() {
 
     INFO(format("timer_activate | now: {}", now_ms));
 
-    auto p = timer_map.begin();
-    for ( ; p != timer_map.end(); ) {
-        if (now_ms >= p->first) {
-            p->second();
-            p = timer_map.erase(p);
+    while (!timer_queue.empty()) {
+        auto timer = timer_queue.top();
+        if (now_ms >= timer->id.ms) {
+            if (!timer->stop) {
+                timer->cb();
+            } 
+            timer_queue.pop();
+            delete timer; // 释放资源
         } else {
-            // 如果还有timer，重置一下timefd
-            reset_timefd(fd, p->first);
+            reset_timefd(fd, timer->id.ms);
             return;
         }
     }
-    // 如果没有timer，关闭read
+
     disableEvent(EventType::READ);
 }
 

@@ -37,6 +37,7 @@ void TcpClient::create_conn(fd_t fd, const string peer_ip, const int peer_port) 
         auto cb = [this] () {
             this->remove_conn();
         };
+
         conn = std::make_unique<TcpConnection>(
             loop,
             fd, 
