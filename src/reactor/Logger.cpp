@@ -95,7 +95,7 @@ void FATAL(const string& msg) {
 
 void INFO(const string& msg) {
     // 带上调用栈，行名
-    cout << msg << endl;
+    // cout << msg << endl;
 }
 
 

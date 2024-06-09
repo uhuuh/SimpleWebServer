@@ -78,3 +78,8 @@ ThreadPool
 - 上次获取的Eventloop在loop中, poll之后执行FunctorList中的函数, 执行建立连接回调函数, 将channel添加进该Eventloop的poller中
 
 至于用户计算过程也使用线程池, 也是用户在Tcpserver中维护一个Tcpserver, 然后在onMessage将计算任务添加进该线程池中
+
+
+## 记录难点
+- 条件变量使用
+

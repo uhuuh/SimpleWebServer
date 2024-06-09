@@ -12,20 +12,16 @@ int Buffer::pushFrom(fd_t fd) {
     auto n = ::read(fd, begin() + right_write_ptr, remainRight);
     if (n > 0) {
         right_write_ptr += n;
-        return static_cast<int>(n);
-    } else {
-        return n;
     }
+    return n;
 }
 
 int  Buffer::popTo(fd_t fd) {
     auto n = ::write(fd, begin() + left_read_ptr, getSize());
     if (n > 0) {
         left_read_ptr += n;
-        return static_cast<int>(n);
-    } else {
-        return n;
     }
+    return n;
 }
 
 

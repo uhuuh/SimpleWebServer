@@ -54,6 +54,7 @@ void TcpConnection::shutdown() {
 }
 
 void TcpConnection::send(const std::string& msg) {
+    // todo 状态管理，什么状态下可以调用什么样的成员函数。send，shutdown，forceClose
     assertm(state == TcpConnectionState::CONNECTING);
 
     write_buf->push(msg);
@@ -88,6 +89,7 @@ void TcpConnection::handle_read() {
     } else if (n < 0) {
         switch(errno) {
             // todo
+
             case EAGAIN:
             case EINTR:
                 return;
@@ -113,6 +115,9 @@ void TcpConnection::handle_write() {
     assertm(write_buf->getSize() > 0);
 
     write_buf->popTo(fd);
+    // todo 如果write返回错误，EWOULDBLOCK，EPIPE，ECONNRESET
+    // todo write_buf 剩余太多，调用高水位回调
+
 
     if (write_buf->getSize() == 0) {
         disableEvent(EventType::WRITE); 
@@ -135,6 +140,7 @@ void TcpConnection::shutdown_conn_if() {
         if (close_cb) close_cb(this);
 
         // note 防止在成员函数中执行delete this
+        // muduo中conn是share_ptr，然后通过shared_from_this防止conn过早销毁
         loop->addCallbackAfter(remove_conn_cb);
     } else if (state == TcpConnectionState::WRITE_CLOSE) {
         disableEvent(EventType::WRITE);

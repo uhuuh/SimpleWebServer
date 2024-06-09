@@ -21,7 +21,7 @@ fd_t createListenFd(const string& ip, in_port_t port) {
     addr.sin_port = htons(port);
 
     assertm(bind(fd, reinterpret_cast<struct sockaddr *>(&addr), sizeof(addr)) >= 0);
-    assertm(listen(fd, SOMAXCONN) >= 0); // todo listen 队列最大值
+    assertm(listen(fd, SOMAXCONN) >= 0); 
 
     INFO(format("accept_init_listen | fd: {}", fd));
     return fd;
@@ -33,7 +33,8 @@ Acceptor::Acceptor(Eventloop* loop, CreateConnectionCallback create_conn_cb, con
     ip(ip),
     port(port)
 {
-    addEvent(EventType::READ, [this](){this->handle_read();}); // note 函数绑定必须放构造函数的最后一行，但是书上说不行
+    // 函数绑定必须放构造函数的最后一行
+    addEvent(EventType::READ, [this](){this->handle_read();});
 }
 
 void Acceptor::handle_read() {
@@ -43,6 +44,7 @@ void Acceptor::handle_read() {
     socklen_t len;
     auto peer_fd = ::accept(this->fd, reinterpret_cast<sockaddr*>(&addr), &len);
     assertm(peer_fd >= 0);
+    // todo 处理fd耗尽问题
 
     char peer_ip[INET_ADDRSTRLEN];
     inet_ntop(AF_INET, &(addr.sin_addr), peer_ip, INET_ADDRSTRLEN);
