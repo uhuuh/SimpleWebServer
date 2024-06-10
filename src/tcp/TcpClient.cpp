@@ -1,7 +1,8 @@
 #include "EventLoop.hpp"
 #include "EventLoopPool.hpp"
+#include "TCPClient.hpp"
 #include "TCPConnection.hpp"
-#include "TcpClient.hpp"
+#include "TCPClient.hpp"
 #include "TCPConnector.hpp"
 #include "base.hpp"
 #include <memory>
@@ -21,6 +22,10 @@ void TCPClient::run() {
 
     // INFO(format("client_run | id: {}, ip: {}, port: {}", main_loop->thread_id, ip, port));
     main_loop->run();
+}
+
+void TCPClient::stop() {
+    main_loop->stop();
 }
 
 void TCPClient::create_conn(int fd, string peer_ip, int peer_port) {
@@ -44,7 +49,7 @@ void TCPClient::create_conn(int fd, string peer_ip, int peer_port) {
 
 void TCPClient::remove_conn() {
     // client销毁的同时也销毁conn
-    main_loop->quit();
+    main_loop->stop();
 }
 
 

@@ -53,7 +53,6 @@ void TCPAcceptor::handle_read() {
     int peer_port = ntohs(addr.sin_port);
 
     // todo ip和port都是0
-    // INFO(format("accept | peer_fd: {}, peer_ip: {}, peer_port: {}", peer_fd, peer_ip, peer_port));
 
     // peer_fd 是自愿，如果这里直接终止，fd不会被connection保护，不会被调用close
     create_conn_cb(peer_fd, peer_ip, peer_port);

@@ -1,4 +1,4 @@
-#include <map>
+#include <unordered_map>
 #include "base.hpp"
 #include "EventLoopPool.hpp"
 #include "TCPAcceptor.hpp"
@@ -12,6 +12,7 @@ public:
     ~TCPServer() = default;
 
     void run();
+    void stop();
     UserCallback user_cb;
 private:
     void create_conn(int fd, const string peer_ip, const int peer_port);
@@ -22,6 +23,6 @@ private:
     unique_ptr<EventloopPool> loop_pool;
     EventLoop* main_loop;
     unique_ptr<TCPAcceptor> acceptor;
-    map<int, std::unique_ptr<TCPConnection>> conn_map;
+    unordered_map<int, std::unique_ptr<TCPConnection>> conn_map;
     const static int max_conn_num = 20000;
 };

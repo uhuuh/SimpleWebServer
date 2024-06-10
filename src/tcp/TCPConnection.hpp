@@ -30,14 +30,17 @@ public:
 
     void send_data(const std::string& msg);
     string_view get_data();
+    void pop_data();
     void pop_data(int len);
     void half_close();
     void full_close();
+    string to_str();
 
     const string local_ip;
     const int local_port;
     const string peer_ip;
     const int peer_port;
+    const int peer_fd;
 private:
     void handle_read();
     void handle_write();
@@ -46,7 +49,6 @@ private:
 
     State state;
     EventLoop* loop;
-    int fd;
     unique_ptr<EventLoop::Channel> ch;
 
     UserCallback user_cb;

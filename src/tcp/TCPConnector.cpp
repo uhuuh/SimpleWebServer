@@ -4,6 +4,8 @@
 #include "TCPConnector.hpp"
 #include "EventLoop.hpp"
 #include "base.hpp"
+#include <cstring>
+#include <stdexcept>
 
 
 void set_fd_nonblock(int fd) {
@@ -45,15 +47,13 @@ void TCPConnector::connect_peer() {
     auto ret = connect(fd,  (struct sockaddr *)&addr, sizeof(addr));
     if (ret < 0) {
         if (retry_delay_ms <= max_retry_delay_ms) {
-            // INFO(format("connect_retry | after_ms: {}", retry_delay_ms));
             auto cb = bind(&TCPConnector::connect_peer, this);
             loop->add_timer(cb, retry_delay_ms);
             retry_delay_ms *= 2;
         } else {
-            throw;
+            throw runtime_error("connect fail");
         }
     } else {
-        // INFO(format("connect_succ | after_ms: {}", retry_delay_ms));
         // 以阻塞方式建立连接，然后将fd设为非阻塞形式，然后使用loop监听该fd
         set_fd_nonblock(fd);
         create_conn_cb(fd, ip, port);

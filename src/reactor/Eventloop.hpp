@@ -1,23 +1,28 @@
 #pragma once
 #include <cstdint>
+#include <memory>
+#include <mutex>
 #include <unistd.h>
 #include <vector>
+#include "Activater.hpp"
+#include "Logger.hpp"
 #include "base.hpp"
 #include "TimerQueue.hpp"
 
+class Poller;
 
 class EventLoop: noncopyable {
 public:
     class Channel;
-    class Poller;
     enum class EventType;
 
     EventLoop();
     ~EventLoop();
     void run();
-    void quit();
+    void stop();
     bool is_same_thread();
-    Channel* get_channel(int fd);
+    bool is_run();
+    unique_ptr<Channel> get_channel(int fd);
     bool add_callback(Callback cb);
     void add_callback_now(Callback cb);
     void add_callback_after(Callback cb);
@@ -26,8 +31,16 @@ public:
 private:
     void update_channel(Channel*);
     void remove_channel(Channel*);
-    class Impl;
-    Impl* impl;
+
+
+    bool is_loop;
+    const int thread_id;
+    mutex mu;
+    unique_ptr<Poller> poller; // poller必须放后面，它的析构函数需要后调用，最后才关闭 epoll fd
+    unique_ptr<Activater> activater;
+    unique_ptr<TimerQueue> timer_queue;
+    vector<Callback> cb_list;
+    static const uint32_t timeout_ms = 10;
 };
 
 enum class EventLoop::EventType {
@@ -45,6 +58,8 @@ public:
     }
     ~Channel() {
         loop->remove_channel(this);
+        close(fd);
+        // LOG_TRACE("channel destroy, %s", to_str().c_str());
     }
     void set_event(EventType et, Callback cb) {
         int idx = static_cast<int>(et);
@@ -81,18 +96,13 @@ public:
     inline int get_fd() {
         return fd;
     }
+    string to_str() {
+        return to_format_str("fd=%d enable_read=%d enable_write=%d", fd, (int)enable_arr[0], (int)enable_arr[1]);
+    }
 private:
     EventLoop* loop;
     const int fd = -1;
     vector<Callback> cb_arr{static_cast<int>(EventType::size)};
     vector<bool> trigger_arr = vector<bool>(static_cast<int>(EventType::size));
     vector<bool> enable_arr = vector<bool>(static_cast<int>(EventType::size));
-};
-
-class EventLoop::Poller {
-public:
-    virtual void update_channel(Channel*) = 0;
-    virtual void remove_channel(Channel*) = 0;
-    virtual void poll() = 0;
-    // virtual ~Poller() = 0;
 };

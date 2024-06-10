@@ -15,7 +15,7 @@ public:
     TimerQueue(EventLoop *loop);
     ~TimerQueue();
     TimerId add_timer(Callback cb, uint64_t delay_ms);
-    void cannel_timer(TimerId id);
+    void remove_timer(TimerId id);
 private:
     class Impl;
     Impl* impl;

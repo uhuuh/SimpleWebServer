@@ -2,10 +2,13 @@
 #include "EventLoop.hpp"
 #include "Buffer.hpp"
 #include "base.hpp"
+#include "Logger.hpp"
+#include <cassert>
 #include <memory>
 #include <string_view>
 #include <unistd.h>
 #include <sys/socket.h>
+#include "Logger.hpp"
 
 
 TCPConnection::TCPConnection(
@@ -19,7 +22,7 @@ TCPConnection::TCPConnection(
     RemoveConnectionCallback remove_conn_cb
 ):
     loop(loop),
-    fd(fd),
+    peer_fd(fd),
     ch(loop->get_channel(fd)),
     local_ip(local_ip),
     local_port(local_port),
@@ -29,6 +32,8 @@ TCPConnection::TCPConnection(
     remove_conn_cb(remove_conn_cb),
     state(State::CONNECTING)
 {
+    
+
     write_buf = make_unique<Buffer>();
     read_buf = make_unique<Buffer>();
 
@@ -38,36 +43,42 @@ TCPConnection::TCPConnection(
     ch->set_event(EventLoop::EventType::WRITE, write_cb);
     ch->disable_event(EventLoop::EventType::WRITE);
 
-    if (user_cb.open_cb) {
-        auto cb = [this] {
-            this->user_cb.open_cb(this);
-        };
-        loop->add_callback(cb); 
-    }
+    LOG_TRACE("conn init, %s", to_str().c_str());
+
+    if (user_cb.open_cb) user_cb.open_cb(this);
 }
 
 void TCPConnection::half_close() {
-    // 我方关闭写端
-    // INFO(format("conn_write_close: fd: {}", fd));
-    // change_state(TcpConnectionState::WRITE_CLOSE);
+    assert(state == State::CONNECTING);
 
     state = State::HALF_CLOSE;
     if (write_buf->get_size() == 0 && !ch->is_enable(EventLoop::EventType::WRITE)) {
-        shutdown(fd, SHUT_WR);
+        shutdown(peer_fd, SHUT_WR);
+        LOG_TRACE("conn half_close, %s", to_str().c_str());
     }
 }
 
 void TCPConnection::full_close() {
+    assertm(state != State::FULL_CLOSE);
+
     state = State::FULL_CLOSE;
-    shutdown(fd, SHUT_RDWR);
-    remove_conn_cb(); // note 这里销毁conn，后面没有使用对象成员，应该不会有什么问题
+    shutdown(peer_fd, SHUT_RDWR);
+    LOG_TRACE("conn full_close, %s", to_str().c_str());
+
+    if (user_cb.close_cb) user_cb.close_cb(this);
+
+    loop->add_callback_after(remove_conn_cb); // note add_callback_after添加的回调一定不会立刻执行
+}
+
+string TCPConnection::to_str() {
+    return to_format_str("fd=%d ip=%s port=%d state=%d", peer_fd, peer_ip.c_str(), peer_port, (int)state);
 }
 
 void TCPConnection::send_data(const std::string& msg) {
     assertm(state == State::CONNECTING);
 
     if (write_buf->get_size() + msg.size() >= max_write_buf_size) {
-        LOG_ERROR("write buf too big");
+        LOG_ERROR("conn wirte_buf too big");
         full_close();
         return;
     }
@@ -77,19 +88,30 @@ void TCPConnection::send_data(const std::string& msg) {
 }
 
 string_view TCPConnection::get_data() {
+    assertm(state != State::FULL_CLOSE);
+
     return read_buf->peek();
 }
 
 void TCPConnection::pop_data(int len) {
+    assertm(state != State::FULL_CLOSE);
+
     read_buf->pop(len);
+}
+
+void TCPConnection::pop_data() {
+    assertm(state != State::FULL_CLOSE);
+
+    read_buf->pop(); 
 }
 
 void TCPConnection::handle_read() {
     assertm(loop->is_same_thread());
 
-    // note epoll有检测异常事件，但是不能直接知道是什么异常，通过read或者write返回-1，再根据errno可以知道是什么异常
-    auto n = read_buf->push_from(fd);
+    auto n = read_buf->push_from(peer_fd);
     if (n > 0) {
+        LOG_TRACE("conn read %d byte, %s", n, to_str().c_str());
+
         if (user_cb.message_cb) {
             user_cb.message_cb(this);
         } else {
@@ -116,18 +138,23 @@ void TCPConnection::handle_read() {
 void TCPConnection::handle_write() {
     assertm(loop->is_same_thread());
     assertm(write_buf->get_size() > 0);
-    // todo logger 如何打印出堆栈
 
-    auto n = write_buf->pop_to(fd);
-    // todo 如果write返回错误，EWOULDBLOCK，EPIPE，ECONNRESET
-    // todo write_buf 剩余太多，调用高水位回调
+    auto n = write_buf->pop_to(peer_fd);
     if (n > 0) {
+        LOG_TRACE("conn write %d byte, %s", n, to_str().c_str());
+
         if (write_buf->get_size() == 0) {
             ch->disable_event(EventLoop::EventType::WRITE);
 
+            if (user_cb.write_lower) user_cb.write_lower(this);
+
             if (state == State::HALF_CLOSE) {
-                shutdown(fd, SHUT_WR);
+                shutdown(peer_fd, SHUT_WR);
+
+                LOG_TRACE("conn half_close, %s", to_str().c_str());
             }
+        } else if (write_buf->get_size() >= max_write_buf_size) {
+            if (user_cb.write_high) user_cb.write_high(this);
         }
     } else if (n < 0) {
         switch(errno) {
@@ -142,6 +169,7 @@ void TCPConnection::handle_write() {
         }
     } else {
         // 这个分支应该不可能
+        assertm(-1);
     }
 
 }

@@ -1,5 +1,8 @@
+#include <filesystem>
 #include <memory>
+#include <string>
 #include "TCPServer.hpp"
+#include "Logger.hpp"
 #include "TCPAcceptor.hpp"
 #include "TCPConnection.hpp"
 #include "EventLoop.hpp"
@@ -28,23 +31,28 @@ void TCPServer::run() {
         port
     );
 
-    // INFO(format("server_run | id: {}, ip: {}, port: {}", main_loop->thread_id, ip, port));
     main_loop->run();
+}
+
+void TCPServer::stop() {
+    main_loop->stop();
 }
 
 void TCPServer::create_conn(int fd, const string peer_ip, const int peer_port) {
     auto cb = [this, fd, peer_ip, peer_port]() {
+        // string conn_name = peer_ip + "-" + to_string(peer_port) + "-" + to_string(fd);
         assertm(conn_map.find(fd) == conn_map.end());
 
         if (conn_map.size() >= max_conn_num) {
             close(fd);
+            LOG_ERROR("server close_conn for too many conn, fd=%d ip=%s port=%d", fd, peer_ip.c_str(), peer_port);
             return;
         }
 
+        // LOG_TRACE("server create_conn, fd=%d ip=%s port=%d", fd, peer_ip.c_str(), peer_port);
+
         auto loop = loop_pool ? loop_pool->getLoop() : main_loop;
-        auto cb = [this, fd] () {
-            this->remove_conn(fd);
-        };
+        auto cb = bind(&TCPServer::remove_conn, this, fd);
         conn_map[fd] = std::make_unique<TCPConnection>(
             loop,
             fd, 
@@ -55,8 +63,6 @@ void TCPServer::create_conn(int fd, const string peer_ip, const int peer_port) {
             user_cb,
             cb
         );
-
-        // INFO(format("create_conn | fd: {}, peer_id: {}, peer_port: {}", fd, peer_ip, peer_port));
     };
 
     main_loop->add_callback(cb);
@@ -65,9 +71,9 @@ void TCPServer::create_conn(int fd, const string peer_ip, const int peer_port) {
 void TCPServer::remove_conn(int fd) {
     auto cb = [this, fd] {
         auto iter = this->conn_map.find(fd);
+        string conn_str = iter->second->to_str();
         this->conn_map.erase(iter); 
-
-        // INFO(format("remove_conn | fd: {}", fd));
+        // LOG_TRACE("server destroy conn, %s", conn_str.c_str());
     };
 
     main_loop->add_callback(cb);

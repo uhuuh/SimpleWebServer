@@ -32,7 +32,7 @@ EventloopPool::EventloopPool(int n_thread):
 
 EventloopPool::~EventloopPool() {
     for (int i = 0; i < n_thread; ++i) {
-        loop_list[i]->quit();
+        loop_list[i]->stop();
         thread_list[i].join();
     }
 }

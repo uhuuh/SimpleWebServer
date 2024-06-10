@@ -1,3 +1,4 @@
+#include <memory>
 #include <sys/eventfd.h>
 #include <unistd.h>
 #include "Activater.hpp"
@@ -15,11 +16,12 @@ public:
         auto cb = bind(&Impl::handle_read, this);
         ch->set_event(EventLoop::EventType::READ, cb);
     }
-    ~Impl() {
-        close(fd);
-    }
     void activate() {
-        assertm(loop->is_same_thread());
+        /*
+        quit可能在其他线程调用，quit中调用activate，故activate方法应该是线程安全的
+        并且activate不能加入回调列表中，因为activate本身是为了激活loop立刻处理回调列表
+        这里函数只使用了局部变量和只读全局变量，应该是线程安全的
+        */
 
         uint64_t one = 1;
         auto n = write(fd, &one, sizeof one);

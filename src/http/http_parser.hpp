@@ -1,5 +1,4 @@
 #pragma once
-#include "easyloggingpp.h"
 #include <memory>
 #include <string>
 #include <vector>

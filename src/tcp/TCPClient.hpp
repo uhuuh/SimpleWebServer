@@ -1,14 +1,18 @@
 #pragma once
 #include "base.hpp"
+#include "TCPConnector.hpp"
+#include "TCPConnection.hpp"
+#include <memory>
+using namespace std;
 
-class EventLoop;
-class TCPConnector;
+// todo unique ptr 完整类型
 
 class TCPClient: public noncopyable {
 public:
     TCPClient(const std::string& host, int port);
 
     void run();
+    void stop();
 
     UserCallback user_cb;
 private:
@@ -21,7 +25,7 @@ private:
     const string ip;
     int port;
 
-    std::unique_ptr<TCPConnector> connector;
-    std::unique_ptr<TCPConnection> conn;
+    unique_ptr<TCPConnector> connector;
+    unique_ptr<TCPConnection> conn;
 };
 

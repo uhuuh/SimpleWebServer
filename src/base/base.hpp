@@ -1,14 +1,11 @@
 #pragma once
 #include <functional>
-#include "../logger/Logger.hpp"
 using namespace std;
 
 
-
 using Callback = function<void(void)>;
-class TCPConnection;
-class Buffer;
 
+class TCPConnection;
 using TCPConnectionCallback = std::function<void(TCPConnection*)>;
 struct UserCallback {
     TCPConnectionCallback open_cb;
@@ -24,6 +21,8 @@ using RemoveConnectionCallback = std::function<void(void)>;
 void assertm(bool res, const char* error_msg);
 void assertm(bool res);
 
+string to_format_str(const char* format, ...);
+
 class noncopyable
 {
 public:
@@ -33,3 +32,5 @@ protected:
     noncopyable() = default;
     ~noncopyable() = default;
 };
+
+
