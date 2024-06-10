@@ -1,0 +1,30 @@
+
+acceptor
+- 建立连接太多怎么办 https://blog.csdn.net/qq_42956653/article/details/126396993#:~:text=accept%3D%20%2D1%EF%BC%8Cerrno%3D,%E6%95%B0%E8%87%AA%E7%84%B6%E5%B0%B1%E4%B8%8A%E5%8E%BB%E4%BA%86%E3%80%82
+- 如果使用edge触发模式，应该while accept
+- 如果有newconn回调，则调用，否则关闭连接
+
+connection
+- send，如果outbuffer为空且channel可写，则直接写，否则加入到outbuffer中且打开channel写
+- read 如果有消息，则调用message回调，如果对方关闭连接，调用close回调，如果出错，调用error回调
+    - close回调中，**首先conn的状态必须先是kConnected或kDisconnecting**, 调用server的销毁conn回调
+    - error回调中，仅仅打印异常消息到日志中
+- write
+    - 先尝试写，如果写入部分数据，outbuffer清楚这部分内容，如果outbuffer空关闭channel写。如果
+- 关闭
+    - shutdown 设置关闭状态
+    - forceClose 强制关闭
+    - forceCloseWithDelay
+
+
+server
+- 创建连接，连接应该有名字
+
+
+
+
+
+
+
+
+

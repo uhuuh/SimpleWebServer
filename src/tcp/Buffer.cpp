@@ -1,8 +1,8 @@
-#include "Buffer.h"
+#include "Buffer.hpp"
 #include <unistd.h>
 
 
-int Buffer::pushFrom(fd_t fd) {
+int Buffer::push_from(int fd) {
     auto remainRight = buf.capacity() - right_write_ptr;
     // todo 通过readv结果, 如果结果在栈空间上则自动扩容
     if (remainRight < init_capa / 2) {
@@ -16,8 +16,8 @@ int Buffer::pushFrom(fd_t fd) {
     return n;
 }
 
-int  Buffer::popTo(fd_t fd) {
-    auto n = ::write(fd, begin() + left_read_ptr, getSize());
+int  Buffer::pop_to(int fd) {
+    auto n = ::write(fd, begin() + left_read_ptr, get_size());
     if (n > 0) {
         left_read_ptr += n;
     }
@@ -25,7 +25,7 @@ int  Buffer::popTo(fd_t fd) {
 }
 
 
-int Buffer::getSize() {
+int Buffer::get_size() {
     return right_write_ptr - left_read_ptr;
 }
 
@@ -40,16 +40,22 @@ char *Buffer::begin() {
 }
 
 std::string_view Buffer::peek() {
-    return {begin() + left_read_ptr, static_cast<unsigned long>(getSize())};
+    return {begin() + left_read_ptr, static_cast<unsigned long>(get_size())};
 }
 
-void Buffer::pop() { // 弹出左边的
+void Buffer::pop(int len) { // 弹出左边的
     auto n = peek().size();
+    assertm(len >= 0 && len <= n);
     left_read_ptr += n;
 }
 
+void Buffer::pop() {
+    auto n = peek().size();
+    pop(n);
+}
+
 void Buffer::buf_move_head() {
-    auto size = getSize();
+    auto size = get_size();
     std::copy(buf.begin() + left_read_ptr, buf.begin() + right_write_ptr, buf.begin());
     left_read_ptr = 0;
     right_write_ptr = size;

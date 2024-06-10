@@ -1,149 +1,148 @@
-#include "TcpConnection.h"
-#include "Channel.h"
-#include "EventLoop.h"
-#include "Buffer.h"
-#include "Logger.h"
-#include "base.h"
+#include "TCPConnection.hpp"
+#include "EventLoop.hpp"
+#include "Buffer.hpp"
+#include "base.hpp"
 #include <memory>
+#include <string_view>
 #include <unistd.h>
 #include <sys/socket.h>
 
 
-TcpConnection::TcpConnection(
-    Eventloop* loop,
-    fd_t fd, 
+TCPConnection::TCPConnection(
+    EventLoop* loop,
+    int fd, 
     const string& local_ip,
     const int local_port,
     const string& peer_ip,
     const int peer_port,
-    UserOpenCallback open_cb,
-    UserCloseCallback close_cb,
-    UserMessageCallback message_cb,
+    UserCallback& user_cb,
     RemoveConnectionCallback remove_conn_cb
 ):
-    Channel(loop, fd),
+    loop(loop),
+    fd(fd),
+    ch(loop->get_channel(fd)),
     local_ip(local_ip),
     local_port(local_port),
     peer_ip(peer_ip),
     peer_port(peer_port),
-    open_cb(open_cb),
-    close_cb(close_cb),
-    message_cb(message_cb),
+    user_cb(user_cb),
     remove_conn_cb(remove_conn_cb),
-    state(TcpConnectionState::CONNECTING)
+    state(State::CONNECTING)
 {
     write_buf = make_unique<Buffer>();
     read_buf = make_unique<Buffer>();
 
-    addEvent(EventType::READ, [this]{handle_read();});
-    addEvent(EventType::WRITE, [this]{handle_write();});
-    disableEvent(EventType::WRITE);
+    auto read_cb = bind(&TCPConnection::handle_read, this);
+    auto write_cb = bind(&TCPConnection::handle_write, this);
+    ch->set_event(EventLoop::EventType::READ, read_cb);
+    ch->set_event(EventLoop::EventType::WRITE, write_cb);
+    ch->disable_event(EventLoop::EventType::WRITE);
 
-    if (open_cb) {
+    if (user_cb.open_cb) {
         auto cb = [this] {
-            this->open_cb(this);
+            this->user_cb.open_cb(this);
         };
-        loop->addCallback(cb); 
+        loop->add_callback(cb); 
     }
 }
 
-void TcpConnection::shutdown() {
+void TCPConnection::half_close() {
     // 我方关闭写端
-    INFO(format("conn_write_close: fd: {}", fd));
-    change_state(TcpConnectionState::WRITE_CLOSE);
+    // INFO(format("conn_write_close: fd: {}", fd));
+    // change_state(TcpConnectionState::WRITE_CLOSE);
+
+    state = State::HALF_CLOSE;
+    if (write_buf->get_size() == 0 && !ch->is_enable(EventLoop::EventType::WRITE)) {
+        shutdown(fd, SHUT_WR);
+    }
 }
 
-void TcpConnection::send(const std::string& msg) {
-    // todo 状态管理，什么状态下可以调用什么样的成员函数。send，shutdown，forceClose
-    assertm(state == TcpConnectionState::CONNECTING);
+void TCPConnection::full_close() {
+    state = State::FULL_CLOSE;
+    shutdown(fd, SHUT_RDWR);
+    remove_conn_cb(); // note 这里销毁conn，后面没有使用对象成员，应该不会有什么问题
+}
+
+void TCPConnection::send_data(const std::string& msg) {
+    assertm(state == State::CONNECTING);
+
+    if (write_buf->get_size() + msg.size() >= max_write_buf_size) {
+        LOG_ERROR("write buf too big");
+        full_close();
+        return;
+    }
 
     write_buf->push(msg);
-    enableEvent(EventType::WRITE);
+    ch->enable_event(EventLoop::EventType::WRITE);
 }
 
-void TcpConnection::change_state(TcpConnectionState next_state) {
-    if (state == TcpConnectionState::READ_CLOSE && next_state == TcpConnectionState::WRITE_CLOSE) {
-        next_state = TcpConnectionState::CLOSE;
-    } else if (state == TcpConnectionState::WRITE_CLOSE && next_state == TcpConnectionState::READ_CLOSE) {
-        next_state = TcpConnectionState::CLOSE;
-    }
-    state = next_state;
-
-
-    if (state == TcpConnectionState::READ_CLOSE) {
-        disableEvent(EventType::READ);
-    } else {
-        shutdown_conn_if();
-    }
+string_view TCPConnection::get_data() {
+    return read_buf->peek();
 }
 
-void TcpConnection::handle_read() {
-    assertm(loop->isInSameThread());
+void TCPConnection::pop_data(int len) {
+    read_buf->pop(len);
+}
+
+void TCPConnection::handle_read() {
+    assertm(loop->is_same_thread());
 
     // note epoll有检测异常事件，但是不能直接知道是什么异常，通过read或者write返回-1，再根据errno可以知道是什么异常
-    auto n = read_buf->pushFrom(fd);
-    if (n == 0) {
-        // 对方关闭连接 
-        INFO(format("conn_close | fd: {}", fd));
-        change_state(TcpConnectionState::CLOSE);
-    } else if (n < 0) {
-        switch(errno) {
-            // todo
-
-            case EAGAIN:
-            case EINTR:
-                return;
-            default:
-                // 对方关闭读端
-                INFO(format("conn_read_close: fd: {}", fd));
-                change_state(TcpConnectionState::READ_CLOSE);
-        }
-    } else {
-        if (message_cb) {
-            message_cb(this, read_buf.get());
+    auto n = read_buf->push_from(fd);
+    if (n > 0) {
+        if (user_cb.message_cb) {
+            user_cb.message_cb(this);
         } else {
             // 没有message_cb处理buf中的数据，这里pop，防止堆积
             read_buf->pop();
         }
+    } else if (n < 0) {
+        switch(errno) {
+            case EAGAIN:
+            case EINTR:
+                // 可忽视的错误
+                return;
+                break;
+            default:
+                // 其他错误
+                full_close();
+        }
+    } else {
+        // 对方关闭了连接
+        full_close();
     }
 }
 
-void TcpConnection::handle_write() {
-    assertm(loop->isInSameThread());
-
+void TCPConnection::handle_write() {
+    assertm(loop->is_same_thread());
+    assertm(write_buf->get_size() > 0);
     // todo logger 如何打印出堆栈
-    assertm(write_buf->getSize() > 0);
 
-    write_buf->popTo(fd);
+    auto n = write_buf->pop_to(fd);
     // todo 如果write返回错误，EWOULDBLOCK，EPIPE，ECONNRESET
     // todo write_buf 剩余太多，调用高水位回调
+    if (n > 0) {
+        if (write_buf->get_size() == 0) {
+            ch->disable_event(EventLoop::EventType::WRITE);
 
-
-    if (write_buf->getSize() == 0) {
-        disableEvent(EventType::WRITE); 
-
-        shutdown_conn_if();
+            if (state == State::HALF_CLOSE) {
+                shutdown(fd, SHUT_WR);
+            }
+        }
+    } else if (n < 0) {
+        switch(errno) {
+            case EAGAIN:
+            case EINTR:
+                // 可忽视的错误
+                return;
+                break;
+            default:
+                // 其他错误
+                full_close();
+        }
+    } else {
+        // 这个分支应该不可能
     }
+
 }
 
-void TcpConnection::shutdown_conn_if() {
-    if (write_buf->getSize() != 0) return;
-
-    if (state == TcpConnectionState::CLOSE) {
-        disableEvent(EventType::WRITE);
-        disableEvent(EventType::READ);
-        // note 由于我方只会关闭写端，故执行到此处连接已经关闭，无需再执行下面函数关闭连接
-        // assertm(::shutdown(fd, SHUT_RDWR) >= 0);
-        // assertm(::shutdown(fd, SHUT_RD) >= 0);
-        // assertm(::close(fd) >= 0);
- 
-        if (close_cb) close_cb(this);
-
-        // note 防止在成员函数中执行delete this
-        // muduo中conn是share_ptr，然后通过shared_from_this防止conn过早销毁
-        loop->addCallbackAfter(remove_conn_cb);
-    } else if (state == TcpConnectionState::WRITE_CLOSE) {
-        disableEvent(EventType::WRITE);
-        assertm(::shutdown(fd, SHUT_WR) >= 0);
-    }
-}

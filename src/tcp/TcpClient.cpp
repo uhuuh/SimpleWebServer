@@ -1,60 +1,48 @@
-#include "TcpClient.h"
-#include "Connector.h"
-#include "EventLoop.h"
-#include "EventloopPool.h"
-#include "TcpConnection.h"
-#include "Channel.h"
-#include "base.h"
+#include "EventLoop.hpp"
+#include "EventLoopPool.hpp"
+#include "TCPConnection.hpp"
+#include "TcpClient.hpp"
+#include "TCPConnector.hpp"
+#include "base.hpp"
 #include <memory>
 
 
-TcpClient::TcpClient(const string& ip, port_t port):
+TCPClient::TCPClient(const string& ip, int port):
     ip(ip),
     port(port),
-    main_loop(new Eventloop())
+    main_loop(new EventLoop())
 {
 }
 
-void TcpClient::run() {
+void TCPClient::run() {
     // todo 优化下面的lambda，使用bind试试看
-    auto cb = [this] (auto fd, auto ip, auto port) {
-        this->create_conn(fd, ip, port);
-    };
-    connector = make_unique<Connector>(
-        main_loop,
-        cb,
-        ip,
-        port
-    );
+    auto cb = bind(&TCPClient::create_conn, this, placeholders::_1, placeholders::_2, placeholders::_3);
+    connector = make_unique<TCPConnector>(main_loop, cb, ip, port);
 
-    INFO(format("client_run | id: {}, ip: {}, port: {}", main_loop->thread_id, ip, port));
+    // INFO(format("client_run | id: {}, ip: {}, port: {}", main_loop->thread_id, ip, port));
     main_loop->run();
 }
 
-void TcpClient::create_conn(fd_t fd, const string peer_ip, const int peer_port) {
+void TCPClient::create_conn(int fd, string peer_ip, int peer_port) {
     auto cb = [this, fd, peer_ip, peer_port]() {
         auto loop = main_loop;
-        auto cb = [this] () {
-            this->remove_conn();
-        };
+        auto cb = bind(&TCPClient::remove_conn, this);
 
-        conn = std::make_unique<TcpConnection>(
+        conn = std::make_unique<TCPConnection>(
             loop,
             fd, 
             ip,
             port,
             peer_ip,
             peer_port,
-            openCallback,
-            closeCallback,
-            messageCallback,
+            user_cb,
             cb
         );
     };
-    main_loop->addCallback(cb);
+    main_loop->add_callback(cb);
 }
 
-void TcpClient::remove_conn() {
+void TCPClient::remove_conn() {
     // client销毁的同时也销毁conn
     main_loop->quit();
 }
