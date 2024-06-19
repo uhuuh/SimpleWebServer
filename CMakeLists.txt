@@ -35,12 +35,14 @@ dir_find_src(src/reactor reactor_src)
 dir_find_src(src/tcp tcp_src)
 dir_find_src(src/base base_src)
 dir_find_src(src/logger logger_src)
+dir_find_src(src/http http_src)
 
 link_libraries(pthread)
 
 add_executable(test_logger test/logger/test.cpp ${logger_src})
 add_executable(test_reactor test/reactor/test.cpp ${reactor_src} ${base_src} ${logger_src})
 add_executable(test_tcp test/tcp/test.cpp ${tcp_src} ${reactor_src} ${base_src} ${logger_src})
+add_executable(test_http test/http/test.cpp ${http_src})
 
 
 

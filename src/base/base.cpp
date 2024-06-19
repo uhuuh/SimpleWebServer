@@ -2,6 +2,7 @@
 #include <cstdarg>
 #include <cstdio>
 #include <cstring>
+#include <stdexcept>
 
 void assertm(bool res) {
     if (!res) {

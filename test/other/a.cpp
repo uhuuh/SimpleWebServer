@@ -1,5 +1,6 @@
 #include <functional>
 #include <iostream>
+#include <memory>
 using namespace std;
 
 struct A {
@@ -30,6 +31,12 @@ void test1() {
 void test2() {
     function<void(void)> fun;
     fun();
+}
+
+void test3() {
+    unique_ptr<int> b;
+    shared_ptr<int> a;
+    weak_ptr<int> c;
 }
 
 int main() {

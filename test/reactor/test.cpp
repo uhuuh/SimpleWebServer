@@ -1,4 +1,5 @@
 #include <chrono>
+#include <cstring>
 #include <iostream>
 #include <memory>
 #include <thread>
@@ -36,7 +37,7 @@ void test_fd() {
             for (int i = 0; i < fd_total; ++i) {
                 int write_fd = fd_list[i].second;
                 const char* write_content = "xxx";
-                write(write_fd, write_content, sizeof(write_content));
+                write(write_fd, write_content, strlen(write_content));
             }
 
             count += 1;
