@@ -1,11 +1,11 @@
-#include <cstdint>
 #include <memory>
 #include <mutex>
 #include <unistd.h>
 #include <vector>
+#include "TimerScheduler.hpp"
 #include "base.hpp"
 #include "Activater.hpp"
-#include "TimerQueue.hpp"
+#include "TimerSchedulerAdapter.hpp"
 #include "Poller.hpp"
 #include "Eventloop.hpp"
 using namespace std;
@@ -15,13 +15,14 @@ EventLoop::EventLoop():
     thread_id(gettid()),
     poller(new Epoll()),
     activater(new Activater(this)),
-    timer_queue(new TimerQueue(this)) {}
+    ti_sche(new TimerSchedulerAdapter(this)) {}
 
 EventLoop::~EventLoop() {
     stop();
 }
 
 void EventLoop::run() {
+    assertm(is_loop == false);
     is_loop = true;
 
     while (is_loop) {
@@ -57,7 +58,7 @@ unique_ptr<EventLoop::Channel> EventLoop::get_channel(int fd) {
 }
 
 bool EventLoop::add_callback(Callback cb) {
-    if (is_same_thread()) {
+    if (is_loop && is_same_thread()) {
         add_callback_now(cb);
         return true;
     } else {
@@ -74,13 +75,16 @@ void EventLoop::add_callback_after(Callback cb) {
     {
         lock_guard lock(mu);
         cb_list.push_back(cb);
+        activater->activate();
     }
 }
-TimerQueue::TimerId EventLoop::add_timer(Callback cb, uint64_t delay_ms) {
-    return timer_queue->add_timer(cb, delay_ms);
+TimerId EventLoop::add_timer(Timer ti) {
+    lock_guard<mutex> lock(mu);
+    return ti_sche->add_timer(ti);
 }
-void EventLoop::remove_timer(TimerQueue::TimerId id) {
-    timer_queue->remove_timer(id);
+void EventLoop::remove_timer(TimerId id) {
+    lock_guard<mutex> lock(mu);
+    ti_sche->remove_timer(id);
 }
 
 void EventLoop::update_channel(EventLoop::Channel* ch) {

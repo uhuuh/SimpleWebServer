@@ -1,8 +1,6 @@
 #include <iostream>
 #include <thread>
-#include "TCPConnection.hpp"
-#include "TCPServer.hpp"
-#include "TcpClient.hpp"
+#include "tcp_user.hpp"
 using namespace std;
 
 void test_server() {

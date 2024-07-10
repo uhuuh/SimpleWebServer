@@ -2,6 +2,7 @@
 #include "Buffer.hpp"
 #include "base.hpp"
 #include "EventLoop.hpp"
+#include "tcp_fun.hpp"
 #include <memory>
 #include <string_view>
 

@@ -1,9 +1,10 @@
 #pragma once
 #include "EventLoop.hpp"
 #include <memory>
+#include "tcp_fun.hpp"
+
 
 class EventLoop;
-
 class TCPConnector {
 public:
     TCPConnector(EventLoop* loop, CreateConnectionCallback create_conn_cb, const std::string& ip, int port);

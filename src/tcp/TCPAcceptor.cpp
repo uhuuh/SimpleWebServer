@@ -7,24 +7,6 @@
 #include "TCPAcceptor.hpp"
 
 
-int createListenFd(const string& ip, int port) {
-    auto fd = ::socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, IPPROTO_TCP);
-    assertm(fd >= 0);
-
-    int reuse = 1;
-    assertm(::setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse)) >= 0); // 设置复用
-
-    struct sockaddr_in addr;
-    addr.sin_family = AF_INET;
-    // address.sin_addr.s_addr = INADDR_ANY; // 监听所有网络接口
-    inet_pton(AF_INET, ip.c_str(), &addr.sin_addr);
-    addr.sin_port = htons(port);
-
-    assertm(bind(fd, reinterpret_cast<struct sockaddr *>(&addr), sizeof(addr)) >= 0);
-    assertm(listen(fd, SOMAXCONN) >= 0); 
-
-    return fd;
-}
 
 TCPAcceptor::TCPAcceptor(EventLoop* loop, CreateConnectionCallback create_conn_cb, const std::string& ip, int port):
     loop(loop),

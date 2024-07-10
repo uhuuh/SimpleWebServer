@@ -55,7 +55,7 @@ void test_creater(T& me) {
     cout << "******" << endl;
 }
 
-void test() {
+void test_parser() {
     string text_get = read_file("../test/http/example_get.txt");
     auto me_get = test_parser_request(text_get, true);
     test_creater(*me_get.get());
@@ -69,8 +69,13 @@ void test() {
     test_creater(*me_res.get());
 }
 
+void test_server() {
+    
+};
+
 int main() {
-    test();
+    // test_parser();
+    test_server();
 
     return 0;
 }

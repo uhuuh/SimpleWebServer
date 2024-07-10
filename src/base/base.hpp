@@ -1,28 +1,22 @@
 #pragma once
 #include <functional>
 #include <string>
+#include "sys_call.hpp"
+#include <memory>
+#include <list>
 using namespace std;
 
 
 using Callback = function<void(void)>;
 
-class TCPConnection;
-using TCPConnectionCallback = std::function<void(TCPConnection*)>;
-struct UserCallback {
-    TCPConnectionCallback open_cb;
-    TCPConnectionCallback close_cb;
-    TCPConnectionCallback message_cb;
-    TCPConnectionCallback write_high;
-    TCPConnectionCallback write_lower;
-};
 
-using CreateConnectionCallback = std::function<void(int, string, int)>;
-using RemoveConnectionCallback = std::function<void(void)>;
 
 void assertm(bool res, const char* error_msg);
 void assertm(bool res);
 
 string to_format_str(const char* format, ...);
+
+uint64_t get_now_timestamp();
 
 class noncopyable
 {
@@ -34,4 +28,21 @@ protected:
     ~noncopyable() = default;
 };
 
-
+template <typename T>
+class ResourceQueue {
+public:
+  unique_ptr<T> get(bool is_create=false) {
+    if (queue.empty() && is_create) {
+      return make_unique<T>();
+    } else {
+      auto a = std::move(queue.front());
+      queue.pop_front();
+      return a;
+    }
+  }
+  void add(unique_ptr<T> a) {
+    queue.push_back(move(a));
+  }
+private:
+  list<unique_ptr<T>> queue;
+};

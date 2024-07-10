@@ -1,4 +1,5 @@
 #include <chrono>
+#include <cstdint>
 #include <cstring>
 #include <iostream>
 #include <memory>
@@ -63,7 +64,7 @@ void test_time() {
         auto real_dur_ms = chrono::duration_cast<chrono::milliseconds>(end - start).count();
         cout << "timer trigger, after " << real_dur_ms << endl;
     };
-    loop.add_timer(cb, dur_ms);
+    loop.add_timer({static_cast<uint64_t>(dur_ms), cb});
 
     loop.run();
 }

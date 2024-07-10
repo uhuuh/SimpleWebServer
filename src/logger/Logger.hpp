@@ -94,6 +94,7 @@ public:
     };
 
     Level now_level = Level::TRACE;
+    bool is_print = false;
 
     static Logger* get_instance() {
         static Logger logger;
@@ -149,7 +150,6 @@ private:
 
     int fd = 0;
     thread th;
-    bool is_print = false;
     bool is_thread_run;
     mutex mu;
     condition_variable conv;

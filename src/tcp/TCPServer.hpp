@@ -1,14 +1,18 @@
+#include <memory>
+#include <unistd.h>
 #include <unordered_map>
 #include "base.hpp"
-#include "EventLoopPool.hpp"
-#include "TCPAcceptor.hpp"
-#include "TCPConnection.hpp"
-using namespace std;
+#include "tcp_fun.hpp"
 
 
+class EventLoop;
+class EventloopPool;
+class TCPAcceptor;
 class TCPServer: public noncopyable {
 public:
-    TCPServer(const string& ip, int port, int n_thread = 0);
+
+
+    TCPServer(const string& ip, int port, int n_thread = 1);
     ~TCPServer() = default;
 
     void run();
@@ -26,3 +30,4 @@ private:
     unordered_map<int, std::unique_ptr<TCPConnection>> conn_map;
     const static int max_conn_num = 20000;
 };
+

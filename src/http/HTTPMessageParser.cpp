@@ -1,6 +1,5 @@
 #include <cassert>
 #include <cstdio>
-#include <format>
 #include <functional>
 #include <memory>
 #include <string>

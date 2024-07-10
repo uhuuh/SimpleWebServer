@@ -1,11 +1,13 @@
 #include <arpa/inet.h>
 #include <cassert>
+#include <cstdint>
 #include <fcntl.h>
 #include "TCPConnector.hpp"
 #include "EventLoop.hpp"
 #include "base.hpp"
 #include <cstring>
 #include <stdexcept>
+#include "TimerScheduler.hpp"
 
 
 void set_fd_nonblock(int fd) {
@@ -48,7 +50,7 @@ void TCPConnector::connect_peer() {
     if (ret < 0) {
         if (retry_delay_ms <= max_retry_delay_ms) {
             auto cb = bind(&TCPConnector::connect_peer, this);
-            loop->add_timer(cb, retry_delay_ms);
+            loop->add_timer({static_cast<uint64_t>(retry_delay_ms), cb});
             retry_delay_ms *= 2;
         } else {
             throw runtime_error("connect fail");

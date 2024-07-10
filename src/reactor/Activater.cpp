@@ -37,6 +37,7 @@ private:
 
         uint64_t one = 1;
         auto n = read(fd, &one, sizeof one);
+        // 多次write，read时返回值取决于EFD_SEMAPHORE
         assertm(n == sizeof one);
     }
 };

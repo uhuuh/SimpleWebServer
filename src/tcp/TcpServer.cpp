@@ -1,23 +1,23 @@
-#include <filesystem>
 #include <memory>
 #include <string>
 #include "TCPServer.hpp"
+#include "EventloopPool.hpp"
 #include "Logger.hpp"
 #include "TCPAcceptor.hpp"
 #include "TCPConnection.hpp"
 #include "EventLoop.hpp"
+#include "base.hpp"
 
 // todo 在类型中定义析构函数, 克服使用unique_ptr的时候报不完整type错误
 
 
 TCPServer::TCPServer(const string& ip, int port, int n_thread):
     ip(ip),
-    port(port),
-    main_loop(new EventLoop()) // 需要一个main loop阻塞主线程
+    port(port)
 {
-    if (n_thread != 0) {
-        loop_pool = make_unique<EventloopPool>(n_thread);
-    }
+    assertm(n_thread >= 1);
+    loop_pool = make_unique<EventloopPool>(n_thread);
+    main_loop = loop_pool->getLoop();
 }
 
 void TCPServer::run() {
@@ -31,11 +31,11 @@ void TCPServer::run() {
         port
     );
 
-    main_loop->run();
+    loop_pool->wait_stop();
 }
 
 void TCPServer::stop() {
-    main_loop->stop();
+    loop_pool->stop();
 }
 
 void TCPServer::create_conn(int fd, const string peer_ip, const int peer_port) {

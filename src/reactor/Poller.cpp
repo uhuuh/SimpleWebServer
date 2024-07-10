@@ -23,9 +23,11 @@ public:
         ev.events = 0;
         if (ch->is_enable(EventLoop::EventType::READ)) {
             ev.events |= EPOLLIN;
+            if (ch->is_once) ev.events |= EPOLLONESHOT;
         }
         if (ch->is_enable(EventLoop::EventType::WRITE)) {
             ev.events |= EPOLLOUT;
+            if (ch->is_once) ev.events |= EPOLLONESHOT;
         }
         if (fd_set.find(ch->get_fd()) == fd_set.end()) {
             assertm(epoll_ctl(epoll_fd, EPOLL_CTL_ADD, ch->get_fd(), &ev) >= 0);

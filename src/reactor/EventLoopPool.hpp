@@ -1,5 +1,6 @@
 #pragma once
 #include "base.hpp"
+#include <memory>
 #include <thread>
 #include <mutex>
 
@@ -11,11 +12,14 @@ public:
     explicit EventloopPool(int n_thread);
     ~EventloopPool();
     EventLoop* getLoop();
-private:
+    void wait_stop();
+    void stop();
+
     vector<unique_ptr<EventLoop>> loop_list;
+    const int n_thread;
+private:
     vector<thread> thread_list;
     mutex mu;
-    const int n_thread;
     int next_i;
 };
 
