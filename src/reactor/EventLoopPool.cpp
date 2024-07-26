@@ -11,24 +11,16 @@ EventloopPool::EventloopPool(int n_thread):
     thread_list(n_thread),
     loop_list(n_thread)
 {
-    atomic<int> count;
     for (int i = 0; i < n_thread; ++i) {
-        thread_list[i] = thread([this, i, &count] () {
-            loop_list[i]->run();
-            count.fetch_add(1);
-        });
-    }
-
-    while (count == n_thread) {
-        this_thread::sleep_for(chrono::milliseconds(10));
+        loop_list[i] = make_unique<EventLoop>();
     }
 }
 
 EventloopPool::~EventloopPool() {
     for (int i = 0; i < n_thread; ++i) {
         loop_list[i]->stop();
-        thread_list[i].join();
     }
+    wait_stop();
 }
 
 EventLoop* EventloopPool::getLoop() {
@@ -38,12 +30,22 @@ EventLoop* EventloopPool::getLoop() {
 
 void EventloopPool::wait_stop() {
     for (int i = 0; i < n_thread; ++i) {
-        thread_list[i].join();
+        if (thread_list[i].joinable()) {
+            thread_list[i].join();
+        }
     }
 }
 
 void EventloopPool::stop() {
     for (int i = 0; i < n_thread; ++i) {
         loop_list[i]->stop();
+    }
+}
+
+void EventloopPool::start() {
+    for (int i = 0; i < n_thread; ++i) {
+        thread_list[i] = thread([this, i] () {
+            loop_list[i]->run();
+        });
     }
 }

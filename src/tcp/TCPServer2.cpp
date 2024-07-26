@@ -2,23 +2,32 @@
 #include "Coroutine.hpp"
 #include "EventloopPool.hpp"
 #include "co_fun.hpp"
+#include <memory>
 
 
-CoroutineSchedulerEventLoopPool::CoroutineSchedulerEventLoopPool(int n_thread, CoroutinePool *co_pool)
-    :loop_pool(new EventloopPool(n_thread)) 
+CoroutineSchedulerEventLoopPool::CoroutineSchedulerEventLoopPool(int n_thread, CoroutinePool *co_pool) :
+    loop_pool(new EventloopPool(n_thread)),
+    co_pool(co_pool)
 {
-    sche_list.reserve(n_thread);
-    for (int i = 0; i < n_thread; ++i) {
-        sche_list[i] = CorouteScheduler(loop_pool->loop_list[i].get(), co_pool);
+    sche_list.reserve(loop_pool->n_thread);
+    for (int i = 0; i < loop_pool->n_thread; ++i) {
+        sche_list.push_back(make_unique<CorouteScheduler>(loop_pool->loop_list[i].get(), co_pool));
     }
 }
 
+void CoroutineSchedulerEventLoopPool::run() {
+    loop_pool->start();
+    loop_pool->wait_stop();
+}
+
 void CoroutineSchedulerEventLoopPool::add_callback_to_main(Callback cb) {
-    sche_list[loop_pool->n_thread - 1].add_callback(cb);
+    sche_list[loop_pool->n_thread - 1]->add_callback(cb);
 }
 void CoroutineSchedulerEventLoopPool::add_callback(Callback cb) {
-    sche_list[i_thread].add_callback(cb);
-    i_thread = (i_thread + 1) % (loop_pool->n_thread - 1);
+    sche_list[i_thread]->add_callback(cb);
+    if (loop_pool->n_thread != 1) {
+        i_thread = (i_thread + 1) % (loop_pool->n_thread - 1);
+    }
 }
 void CoroutineSchedulerEventLoopPool::stop() {
     loop_pool->stop();
@@ -32,9 +41,12 @@ TCPServer2::TCPServer2(const string &ip, int port, int n_thread)
         make_unique<CoroutineSchedulerEventLoopPool>(n_thread, co_pool.get());
 }
 void TCPServer2::run() {
+    // eventloop pool 构造好就说明loop开始run
     listen_fd = createListenFd(ip, port);
     auto cb = bind(&TCPServer2::accept_cb, this);
     co_sche_pool->add_callback_to_main(cb);
+
+    co_sche_pool->run();
 }
 void TCPServer2::stop() { co_sche_pool->stop(); }
 void TCPServer2::accept_cb() {

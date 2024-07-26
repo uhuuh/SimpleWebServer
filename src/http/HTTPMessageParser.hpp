@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 #include <string_view>
+#include <type_traits>
 #include <unordered_map>
 #include <utility>
 using namespace std;
@@ -46,6 +47,7 @@ using PII = pair<int, int>;
 struct HTTPMessageParser;
 struct State {
     virtual void match(HTTPMessageParser&)=0;
+    virtual ~State() = default;
 };
 
 struct HTTPMessageParser {
@@ -54,11 +56,12 @@ struct HTTPMessageParser {
     bool is_match = true;
     int fail_code = -1;
 
-    int total_len = 0;
+    int total_len = 0; // 头部中没有内容长度字段，内容长度默认为0
     int now_len = 0;
     char now_char = 0;
     const char* begin_ptr = nullptr;
     unique_ptr<State> state;
+    State* next_state = nullptr;
 
     HTTPMethod method = HTTPMethod::GET;
     PII path_pos; 
@@ -81,6 +84,7 @@ using MessageWriteCallback = function<void(const char*, int)>;
 class HTTPMessageWriter {
 public:
     HTTPMessageWriter(MessageWriteCallback cb);
+    void write_error_response_message(int code);
     void write_message(HTTPRequestMessage& me);
     void write_message(HTTPResponseMessage& me);
 private:

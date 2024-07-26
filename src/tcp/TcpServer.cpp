@@ -31,6 +31,7 @@ void TCPServer::run() {
         port
     );
 
+    loop_pool->start();
     loop_pool->wait_stop();
 }
 

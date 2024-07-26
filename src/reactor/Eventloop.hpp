@@ -35,7 +35,7 @@ private:
 
 
     bool is_loop = false;
-    const int thread_id;
+    int thread_id;
     mutex mu;
     unique_ptr<Poller> poller; // poller必须放后面，它的析构函数需要后调用，最后才关闭 epoll fd
     unique_ptr<Activater> activater;

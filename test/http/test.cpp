@@ -2,7 +2,8 @@
 #include <memory>
 #include <sstream>
 #include <fstream>
-#include "HTTPMessageParser.hpp"
+#include "Logger.hpp"
+#include "http_user.hpp"
 using namespace std;
 
 string read_file(const string& filePath) {
@@ -60,6 +61,10 @@ void test_parser() {
     auto me_get = test_parser_request(text_get, true);
     test_creater(*me_get.get());
 
+    string text_get2 = read_file("../test/http/example_get2.txt");
+    auto me_get2 = test_parser_request(text_get2, true);
+    test_creater(*me_get2.get());
+
     string text_post = read_file("../test/http/example_post.txt");
     auto me_post = test_parser_request(text_post, true);
     test_creater(*me_post.get());
@@ -70,10 +75,22 @@ void test_parser() {
 }
 
 void test_server() {
-    
+    HTTPServer2 server("0.0.0.0", 7000, 1);
+    HTTPServer2::HTTPCallback cb = [] (HTTPRequestMessage* req, HTTPResponseMessage* res) {
+        res->body = "this is hello";
+    };
+    HTTPServer2::HTTPCallback cb2 = [] (HTTPRequestMessage* req, HTTPResponseMessage* res) {
+        res->body = "this is /";
+    };
+    server.add_bind("/hello", cb);
+    server.add_bind("/", cb2);
+    server.run();
 };
 
 int main() {
+    //  webbench -t 10 -c 3  http://127.0.0.1:7000/
+    Logger::get_instance()->is_print = true;
+
     // test_parser();
     test_server();
 

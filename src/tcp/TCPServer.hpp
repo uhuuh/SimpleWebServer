@@ -1,3 +1,4 @@
+#pragma once
 #include <memory>
 #include <unistd.h>
 #include <unordered_map>

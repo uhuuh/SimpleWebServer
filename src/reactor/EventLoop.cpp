@@ -12,7 +12,6 @@ using namespace std;
 
 
 EventLoop::EventLoop():
-    thread_id(gettid()),
     poller(new Epoll()),
     activater(new Activater(this)),
     ti_sche(new TimerSchedulerAdapter(this)) {}
@@ -23,6 +22,7 @@ EventLoop::~EventLoop() {
 
 void EventLoop::run() {
     assertm(is_loop == false);
+    thread_id = gettid(); // 有可能在主线程构造，故在实际run的时候绑定线程号
     is_loop = true;
 
     while (is_loop) {
@@ -88,11 +88,11 @@ void EventLoop::remove_timer(TimerId id) {
 }
 
 void EventLoop::update_channel(EventLoop::Channel* ch) {
-    assertm(is_same_thread());
+    lock_guard<mutex> lock(mu);
     poller->update_channel(ch);
 }
 void EventLoop::remove_channel(EventLoop::Channel* ch) {
-    assertm(is_same_thread());
+    lock_guard<mutex> lock(mu);
     poller->remove_channel(ch);
 }
 

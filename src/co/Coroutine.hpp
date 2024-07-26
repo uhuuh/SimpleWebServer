@@ -1,5 +1,8 @@
+#pragma once
 #include "Eventloop.hpp"
 #include "base.hpp"
+#include <memory>
+#include <unordered_map>
 using namespace std;
 
 extern "C" {
@@ -82,6 +85,7 @@ public:
   EventLoop* loop;
   CoroutinePool* co_pool;
   unordered_map<int, unique_ptr<EventLoop::Channel>> fd_map;
+  unordered_map<void*, unique_ptr<CoroutinePool::Channel>> co_map;
   unique_ptr<Coroutine> main_co;
   Coroutine* now_co;
   list<Coroutine*> ready_queue;

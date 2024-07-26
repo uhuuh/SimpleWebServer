@@ -1,0 +1,4 @@
+GET /a.html HTTP/1.0
+User-Agent: WebBench 1.5
+Host: 127.0.0.1
+

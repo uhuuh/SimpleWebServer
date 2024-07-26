@@ -1,5 +1,6 @@
 #include <arpa/inet.h>
 #include <cassert>
+#include <csignal>
 #include <netinet/in.h>
 #include <unistd.h>
 #include <string>
@@ -23,4 +24,11 @@ int createListenFd(const string& ip, int port) {
     assert(listen(fd, SOMAXCONN) >= 0); 
 
     return fd;
+}
+
+void blockSIGPIPE() {
+    sigset_t new_set;
+    sigemptyset(&new_set);
+    sigaddset(&new_set, SIGPIPE);
+    sigprocmask(SIG_BLOCK, &new_set, nullptr);
 }

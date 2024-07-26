@@ -12,6 +12,7 @@ public:
     explicit EventloopPool(int n_thread);
     ~EventloopPool();
     EventLoop* getLoop();
+    void start();
     void wait_stop();
     void stop();
 

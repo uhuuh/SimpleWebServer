@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <utility>
 #include "HTTPMessageParser.hpp"
+#include "base.hpp"
 using namespace std;
 
 string get_method_str(HTTPMethod me) {
@@ -133,6 +134,17 @@ void HTTPMessageWriter::write_header_body(unordered_map<string, string_view> &he
     }
 }
 
+void HTTPMessageWriter::write_error_response_message(int code) {
+    assertm(code == 400 || code == 404);
+    HTTPResponseMessage res; 
+    res.code = code;
+    res.detail = http_code_map.find(code)->second;
+    res.version = HTTPVersion::V1_0;
+    res.header["User-Agent"] = "simple server";
+
+    write_message(res);
+}
+
 struct StateBody: public State {
     int now_idx = 0;
     void match(HTTPMessageParser& context) override {
@@ -183,13 +195,13 @@ struct StateHeader: public State {
                     string key(context.begin_ptr + now_key_offset, now_key_len);
                     context.header_pos[key] = {now_value_offset, now_value_len};
                     // todo 分块传输编码
-                    if (key == "Content-Length") 
+                    if (key == "Content-Length")
                         context.total_len = stoi(string(context.begin_ptr + now_value_offset, now_value_len));
                 } 
 
                 break;
             case part_e::end:
-                if (c == '\n' && is_empty_line == true) context.state.reset(new StateBody());
+                if (c == '\n' && is_empty_line == true) context.next_state = new StateBody();
                 else if (c == '\n') now_part = part_e::key, now_idx = -1;
                 else context.is_match = false;
                 break;
@@ -210,7 +222,7 @@ struct StateDetail: public State {
         auto l = context.now_len;
 
         if (c == '\r') is_prefix_r = true;
-        else if (is_prefix_r && c == '\n') context.detail_pos = {l - now_idx, now_idx + 1}, context.state.reset(new StateHeader());
+        else if (is_prefix_r && c == '\n') context.detail_pos = {l - now_idx, now_idx + 1}, context.next_state = new StateHeader();
 
         // 这里或许可以比较一下detail是否与http_code_map中的一致
         now_idx += 1;
@@ -231,7 +243,7 @@ struct StateCode: public State {
     void match(HTTPMessageParser& context) override {
         auto c = context.now_char;
         if (c >= '0' && c <= '9' && now_idx < 3) code_arr[now_idx] = c - '0';
-        else if (now_idx == 3 && c == ' ') context.code = get_code(), context.state.reset(new StateDetail());
+        else if (now_idx == 3 && c == ' ') context.code = get_code(), context.next_state = new StateDetail();
         else context.is_match = false;
 
         if (context.code == -1) context.is_match = false;
@@ -279,11 +291,11 @@ struct StateVersion: public State {
                 break;
             case 8:
                 if (context.is_request && c == '\r') ;
-                else if (!context.is_request && c == ' ') context.state.reset(new StateCode());
+                else if (!context.is_request && c == ' ') context.next_state = new StateCode();
                 else context.is_match = false;
                 break;
             case 9:
-                if (context.is_request && c == '\n') context.state.reset(new StateHeader());
+                if (context.is_request && c == '\n') context.next_state = new StateHeader();
                 else context.is_match = false;
                 break;
             default:
@@ -330,10 +342,10 @@ struct StateURL: public State {
                 context.query_pos[string(context.begin_ptr + now_key_offset, now_key_len)] = {now_value_offset, now_value_len};
             }
 
-            context.state = unique_ptr<State>(new StateVersion());
+            context.next_state = new StateVersion();
         } else {
             if (now_idx == 0) {
-                context.path_pos.first = l;
+                context.path_pos.first = l - 1;
             }
         }
 
@@ -364,7 +376,7 @@ struct StateMethod: public State {
             }
         } else {
             if (c == ' ') {
-                context.state.reset(new StateURL());
+                context.next_state = new StateURL();
             } else {
                 context.is_match = false;
             }
@@ -388,15 +400,12 @@ bool  HTTPMessageParser::is_completed() {
     auto p = dynamic_cast<StateBody*>(state.get());
     if (p != nullptr && p->now_idx == total_len) return true; // 因为match中now_idx最后加一，故这里是now_idx = total_len而不是now_idx = total_len - 1
 
-    auto p2 = dynamic_cast<StateHeader*>(state.get());
-    if (p2 != nullptr && p2->now_part == StateHeader::part_e::key && p2->now_idx == 0) return true;
-
     return false;
 }
 
 bool HTTPMessageParser::parser_message(const char* str, int len) {
     if (!is_match) return false;
-    if (is_completed()) return false;
+    // if (is_completed()) return false;
 
     begin_ptr = str - now_len;
 
@@ -406,8 +415,14 @@ bool HTTPMessageParser::parser_message(const char* str, int len) {
 
         state->match(*this);
 
-        assert(is_match);
-        if (!is_match) return false;
+        if (!is_match) {
+            return false;
+        }
+        if (next_state) {
+            // 不能再state的match方法中直接修改state，会有heap-use-after-free错误
+            state.reset(next_state);
+            next_state = nullptr;
+        }
     }
     return true;
 }

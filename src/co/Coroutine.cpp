@@ -56,17 +56,16 @@ CorouteScheduler::CorouteScheduler(EventLoop *loop, CoroutinePool *co_pool)
     : loop(loop), co_pool(co_pool), main_co(new Coroutine()) {
     auto cb = [this]() { co_env_init(this); };
     loop->add_callback(cb);
-    // main_co 不需要绑定回调
+    // main_co 不需要绑定回调，不会分配栈内存块，因此不需要从co池中取
 }
 void CorouteScheduler::add_callback(Callback cb) {
-    shared_ptr<CoroutinePool::Channel> co_ch = co_pool->get_channel();
+    unique_ptr<CoroutinePool::Channel> co_ch = co_pool->get_channel();
     auto co_p = co_ch->get();
+    co_map.insert({reinterpret_cast<void*>(co_p), std::move(co_ch)});
 
-    // 如果没有mutable，co_ch是const share_ptr，reset不能调用成功
-    auto cb2 = [cb, co_ch]() mutable {
+    auto cb2 = [cb, co_p, this]() mutable {
         cb();
-        // 这里销毁co_ch
-        co_ch.reset();
+        co_map.erase(reinterpret_cast<void*>(co_p));
     };
     co_p->set_callback(cb2);
 

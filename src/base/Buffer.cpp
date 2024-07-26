@@ -1,23 +1,34 @@
 #include "Buffer.hpp"
+#include <cassert>
 #include <unistd.h>
 
 
-int Buffer::push_from(int fd) {
+int Buffer::push_from(int fd, decltype(read) io_fun) {
     auto remainRight = buf.capacity() - right_write_ptr;
     // todo 通过readv结果, 如果结果在栈空间上则自动扩容
     if (remainRight < init_capa / 2) {
         buf.resize(buf.capacity() * 2);
         remainRight = buf.capacity() - right_write_ptr;
     }
-    auto n = ::read(fd, begin() + right_write_ptr, remainRight);
+    auto n = 0;
+    if (io_fun == nullptr) {
+        n = ::read(fd, begin() + right_write_ptr, remainRight);
+    } else {
+        n = io_fun(fd, begin() + right_write_ptr, remainRight);
+    }
     if (n > 0) {
         right_write_ptr += n;
     }
     return n;
 }
 
-int  Buffer::pop_to(int fd) {
-    auto n = ::write(fd, begin() + left_read_ptr, get_size());
+int  Buffer::pop_to(int fd, decltype(write) io_fun) {
+    auto n = 0;
+    if (io_fun == nullptr) {
+        n = ::write(fd, begin() + left_read_ptr, get_size());
+    } else {
+        n = io_fun(fd, begin() + left_read_ptr, get_size());
+    }
     if (n > 0) {
         left_read_ptr += n;
     }
@@ -39,13 +50,13 @@ char *Buffer::begin() {
     return &(*buf.begin());
 }
 
-std::string_view Buffer::peek() {
+string_view Buffer::peek() {
     return {begin() + left_read_ptr, static_cast<unsigned long>(get_size())};
 }
 
 void Buffer::pop(int len) { // 弹出左边的
     auto n = peek().size();
-    assertm(len >= 0 && len <= n);
+    assert(len >= 0 && len <= n);
     left_read_ptr += n;
 }
 
@@ -56,16 +67,16 @@ void Buffer::pop() {
 
 void Buffer::buf_move_head() {
     auto size = get_size();
-    std::copy(buf.begin() + left_read_ptr, buf.begin() + right_write_ptr, buf.begin());
+    copy(buf.begin() + left_read_ptr, buf.begin() + right_write_ptr, buf.begin());
     left_read_ptr = 0;
     right_write_ptr = size;
 }
-void Buffer::buf_insert_tail(std::string_view str) {
-    std::copy(str.begin(), str.end(), buf.begin() + right_write_ptr);
+void Buffer::buf_insert_tail(string_view str) {
+    copy(str.begin(), str.end(), buf.begin() + right_write_ptr);
     right_write_ptr += str.length();
 }
 
-void Buffer::push(std::string_view str) {
+void Buffer::push(string_view str) {
     // todo 可以先写入socket中一部分
     auto n = str.length();
     auto remain_right = buf.capacity() - right_write_ptr;

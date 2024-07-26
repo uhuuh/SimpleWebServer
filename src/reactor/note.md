@@ -14,3 +14,23 @@ impl模式
 - conn持有channel，conn销毁时channel同样销毁，在channel执行过程中conn销毁
 
 
+```
+void EventloopPool::start() {
+    atomic<int> count(0);
+    for (int i = 0; i < n_thread; ++i) {
+        thread_list[i] = thread([this, i, &count] () {
+            loop_list[i]->run();
+            count.fetch_add(1); // run会阻塞执行，这一行应该移到前面
+        });
+    }
+
+    while (count == n_thread) {
+        this_thread::sleep_for(chrono::milliseconds(10));
+    }
+}
+```
+
+cloc统计代码行数
+```
+cloc --exclude-dir=build .
+```

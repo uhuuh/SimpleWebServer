@@ -5,10 +5,12 @@
 #include <sys/select.h>
 
 
-thread_local CorouteScheduler* thread_co_sche;
+thread_local CorouteScheduler* thread_co_sche = nullptr;
 
 void co_env_init(CorouteScheduler* co_sche) {
+  assert(thread_co_sche == nullptr);
   thread_co_sche = co_sche;
+  LOG_DEBUG("thread_co_sche %p", co_sche);
 }
 
 void co_yield_() {
@@ -17,10 +19,6 @@ void co_yield_() {
 
 template<typename Fun, typename EventType>
 ssize_t _co_io_fun(const Fun& f, int fd, EventType et) {
-  auto ret = f();
-  if (ret >= 0) return ret;
-
-
   if (thread_co_sche->fd_map.find(fd) == thread_co_sche->fd_map.end()) {
     auto ch = thread_co_sche->loop->get_channel(fd);
     ch->is_once = true;
@@ -34,10 +32,11 @@ ssize_t _co_io_fun(const Fun& f, int fd, EventType et) {
     thread_co_sche->fd_map.insert({fd, std::move(ch)});
   }
 
+  auto ret = f();
+  if (ret >= 0) return ret;
+
   thread_co_sche->fd_map[fd]->enable_event(et);
-
   co_yield_();
-
   return f();
 }
 
@@ -47,7 +46,7 @@ ssize_t co_read(int fd, void* buf, size_t size) {
   return _co_io_fun(fun, fd, EventLoop::EventType::READ);
 }
 
-ssize_t co_write(int fd, void* buf, size_t size) {
+ssize_t co_write(int fd, const void* buf, size_t size) {
   auto fun = [fd, buf, size] { return write(fd, buf, size); };
   return _co_io_fun(fun, fd, EventLoop::EventType::WRITE);
 }
@@ -58,6 +57,7 @@ ssize_t co_write(int fd, void* buf, size_t size) {
 // }
 
 ssize_t co_accept(int fd, struct sockaddr* addr, socklen_t* len) {
+  assertm(thread_co_sche->loop->is_same_thread());
   auto fun = [fd, addr, len] { return accept(fd, addr, len); };
   return _co_io_fun(fun, fd, EventLoop::EventType::READ);
 }
