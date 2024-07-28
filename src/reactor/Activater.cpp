@@ -14,7 +14,7 @@ public:
         ch(loop->get_channel(fd))
     {
         auto cb = bind(&Impl::handle_read, this);
-        ch->set_event(EventLoop::EventType::READ, cb);
+        ch->enable_event(EventLoop::EventType::READ, cb);
     }
     void activate() {
         /*

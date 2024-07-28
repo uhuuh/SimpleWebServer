@@ -82,7 +82,7 @@ void Logger::reset_file_fd() {
                     getpid());
     file_name[n] = 0;
 
-    fd = open(file_name, O_WRONLY | O_CREAT);
+    fd = open(file_name, O_WRONLY | O_CREAT, 777);
 }
 
 void Logger::write_buf(const char *log, int size) {

@@ -1,7 +1,9 @@
 #pragma once
+#include <cstddef>
 #include <cstdint>
 #include <memory>
 #include <mutex>
+#include <netinet/in.h>
 #include <unistd.h>
 #include <vector>
 #include "Activater.hpp"
@@ -60,16 +62,16 @@ public:
     ~Channel() {
         loop->remove_channel(this);
         close(fd);
-        // LOG_TRACE("channel destroy, %s", to_str().c_str());
+        LOG_TRACE("channel destroy, %s", to_str().c_str());
     }
-    void set_event(EventType et, const Callback& cb) {
+    void enable_event(EventType et, Callback cb=nullptr) {
         int idx = static_cast<int>(et);
-        enable_arr[idx] = true;
-        cb_arr[idx] = cb;
-        loop->update_channel(this);
-    }
-    void enable_event(EventType et) {
-        int idx = static_cast<int>(et);
+        if (cb == nullptr) {
+            assertm(bool(cb_arr[idx]));
+        } else {
+            cb_arr[idx] = cb;
+        }
+
         enable_arr[idx] = true;
         loop->update_channel(this);
     }

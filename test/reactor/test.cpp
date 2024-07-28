@@ -24,10 +24,10 @@ void test_fd() {
         ch_list[i] = loop.get_channel(read_fd);
         auto cb = [i, read_fd] () {
             char buf[1024];
-            read(read_fd, buf, sizeof(buf));
+            assert(read(read_fd, buf, sizeof(buf)) >= 0);
             printf("No.%d fd %d read trigger: %s\n", i, read_fd, buf);
         };
-        ch_list[i]->set_event(EventLoop::EventType::READ, cb);
+        ch_list[i]->enable_event(EventLoop::EventType::READ, cb);
     }
     
     auto thread_run = [&] () {
@@ -38,7 +38,7 @@ void test_fd() {
             for (int i = 0; i < fd_total; ++i) {
                 int write_fd = fd_list[i].second;
                 const char* write_content = "xxx";
-                write(write_fd, write_content, strlen(write_content));
+                assert(write(write_fd, write_content, strlen(write_content)) >= 0);
             }
 
             count += 1;

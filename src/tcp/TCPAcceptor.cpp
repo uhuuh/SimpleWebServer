@@ -18,7 +18,7 @@ TCPAcceptor::TCPAcceptor(EventLoop* loop, CreateConnectionCallback create_conn_c
 {
     // 函数绑定必须放构造函数的最后一行
     auto cb = bind(&TCPAcceptor::handle_read, this);
-    ch->set_event(EventLoop::EventType::READ, cb);
+    ch->enable_event(EventLoop::EventType::READ, cb);
 }
 
 void TCPAcceptor::handle_read() {

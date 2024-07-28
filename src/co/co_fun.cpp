@@ -21,21 +21,24 @@ template<typename Fun, typename EventType>
 ssize_t _co_io_fun(const Fun& f, int fd, EventType et) {
   if (thread_co_sche->fd_map.find(fd) == thread_co_sche->fd_map.end()) {
     auto ch = thread_co_sche->loop->get_channel(fd);
+    // ch设定为once，不需要关闭对应事件
     ch->is_once = true;
-
-    auto cb = [fd, co=thread_co_sche->now_co] () {
-      // ch设定为once，不需要关闭对应事件
-      thread_co_sche->schedule_co(co);
-    };
-    ch->set_event(et, cb);
-
     thread_co_sche->fd_map.insert({fd, std::move(ch)});
   }
 
   auto ret = f();
   if (ret >= 0) return ret;
 
-  thread_co_sche->fd_map[fd]->enable_event(et);
+  auto &ch = thread_co_sche->fd_map[fd];
+  if (!ch->is_enable(et)) {
+    auto cb = [fd, co=thread_co_sche->now_co] () {
+      thread_co_sche->schedule_co(co);
+    };
+    ch->enable_event(et, cb);
+  } else {
+    ch->enable_event(et);
+  }
+
   co_yield_();
   return f();
 }

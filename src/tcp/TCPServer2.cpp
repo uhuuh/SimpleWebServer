@@ -1,6 +1,7 @@
 #include "TCPServer2.hpp"
 #include "Coroutine.hpp"
 #include "EventloopPool.hpp"
+#include "Logger.hpp"
 #include "co_fun.hpp"
 #include <memory>
 
@@ -41,7 +42,6 @@ TCPServer2::TCPServer2(const string &ip, int port, int n_thread)
         make_unique<CoroutineSchedulerEventLoopPool>(n_thread, co_pool.get());
 }
 void TCPServer2::run() {
-    // eventloop pool 构造好就说明loop开始run
     listen_fd = createListenFd(ip, port);
     auto cb = bind(&TCPServer2::accept_cb, this);
     co_sche_pool->add_callback_to_main(cb);
@@ -54,10 +54,10 @@ void TCPServer2::accept_cb() {
         struct sockaddr_in addr;
         socklen_t len;
         auto peer_fd = co_accept(listen_fd, reinterpret_cast<sockaddr *>(&addr), &len);
-        assertm(peer_fd >= 0);
+        assertm(peer_fd > 0);
 
         if (co_pool->co_count() >= max_conn_num) {
-            // log
+            LOG_INFO("conn over");
             close(peer_fd);
         };
 

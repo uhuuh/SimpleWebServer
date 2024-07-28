@@ -40,13 +40,13 @@ public:
         LOG_TRACE("poller update_channel, %s", ch->to_str().c_str());
     }
     void remove_channel(EventLoop::Channel* ch) {
-        assertm(fd_set.find(ch->get_fd()) != fd_set.end());
+        // 有些ch没有添加事件就销毁, fd_set没有该ch的fd
+        if (fd_set.find(ch->get_fd()) != fd_set.end()) {
+            epoll_event ev;
+            assertm(epoll_ctl(epoll_fd, EPOLL_CTL_DEL, ch->get_fd(), &ev) >= 0);
 
-        epoll_event ev;
-        assertm(epoll_ctl(epoll_fd, EPOLL_CTL_DEL, ch->get_fd(), &ev) >= 0);
-
-        fd_set.erase(ch->get_fd());
-
+            fd_set.erase(ch->get_fd());
+        }
         LOG_TRACE("poller remove_channel, %s", ch->to_str().c_str());
     }
     void poll() {

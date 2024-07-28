@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
-#define PORT 8000
+#define PORT 7000
 #define BUFFER_SIZE 1024
 
 int main() {
@@ -56,6 +56,8 @@ int main() {
         printf("Connection accepted\n");
 
         while ((read_size = read(new_socket, buffer, BUFFER_SIZE)) > 0) {
+            buffer[read_size] = 0;
+            printf("%s\n", buffer);
             write(new_socket, buffer, read_size);
         }
 

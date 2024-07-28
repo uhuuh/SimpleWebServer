@@ -5,8 +5,25 @@ project(SimpleServer)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # 生成compile_commands.json文件，方便vscode clangd插件提供语言服务
 enable_language(ASM) # 使得add_executable支持汇编文件，避免找不到co_swap符号
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address") # 内存泄露检测
+
+# set(CMAKE_BUILD_TYPE "Debug")
+# set(CMAKE_BUILD_TYPE "Release")
+
+# 为 Debug 和 Release 模式设置不同的编译选项
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    message("Configuring Debug build")
+
+    # 0g专门为调试优化设计的选项，提供比O0更好的调试体验
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Og")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address") # 内存相关问题检测
+elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+    message("Configuring Release build")
+
+    # NDEBUG 选项使C的assert失效
+    # todo 生成静态库
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
+endif()
+
 
 function(dir_find_src dir_name output_var)
     # file(GLOB_RECURSE cpp_files "${dir_name}/*.cpp")
@@ -51,8 +68,8 @@ link_libraries(pthread)
 
 add_executable(test_logger test/logger/test.cpp ${logger_src})
 add_executable(test_timer test/timer/test.cpp ${timer_src} ${reactor_src} ${base_src} ${logger_src})
-add_executable(test_co test/co/test.cpp ${co_src} ${reactor_src} ${timer_src} ${base_src} ${logger_src})
 add_executable(test_reactor test/reactor/test.cpp ${reactor_src} ${timer_src} ${base_src} ${logger_src})
+add_executable(test_co test/co/test.cpp ${co_src} ${reactor_src} ${timer_src} ${base_src} ${logger_src})
 add_executable(test_tcp test/tcp/test.cpp ${tcp_src} ${reactor_src} ${co_src} ${timer_src} ${base_src} ${logger_src})
 add_executable(test_http test/http/test.cpp ${http_src} ${tcp_src} ${reactor_src} ${co_src} ${timer_src} ${base_src} ${logger_src})
 

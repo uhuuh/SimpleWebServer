@@ -39,8 +39,8 @@ TCPConnection::TCPConnection(
 
     auto read_cb = bind(&TCPConnection::handle_read, this);
     auto write_cb = bind(&TCPConnection::handle_write, this);
-    ch->set_event(EventLoop::EventType::READ, read_cb);
-    ch->set_event(EventLoop::EventType::WRITE, write_cb);
+    ch->enable_event(EventLoop::EventType::READ, read_cb);
+    ch->enable_event(EventLoop::EventType::WRITE, write_cb);
     ch->disable_event(EventLoop::EventType::WRITE);
 
     LOG_TRACE("conn init, %s", to_str().c_str());

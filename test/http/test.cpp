@@ -75,7 +75,7 @@ void test_parser() {
 }
 
 void test_server() {
-    HTTPServer2 server("0.0.0.0", 7000, 1);
+    HTTPServer2 server("0.0.0.0", 7000, 5);
     HTTPServer2::HTTPCallback cb = [] (HTTPRequestMessage* req, HTTPResponseMessage* res) {
         res->body = "this is hello";
     };
@@ -88,8 +88,8 @@ void test_server() {
 };
 
 int main() {
-    //  webbench -t 10 -c 3  http://127.0.0.1:7000/
-    Logger::get_instance()->is_print = true;
+    // webbench -t 60  -c 10  http://127.0.0.1:7000/
+    // Logger::get_instance()->is_print = true;
 
     // test_parser();
     test_server();

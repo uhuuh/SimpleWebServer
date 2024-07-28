@@ -1,31 +1,30 @@
 
 ## 介绍
 
-实现一个Linux环境上基于Reactor模式的TCP并发服务器
+实现一个Linux环境上基于Reactor模式的WebServer
 
 模块
-- base 一些公共的函数和类型定义
-- logger 日志模块，支持同步模式和异步模式，异步模式下硬盘写入速度200MB/s以上
-- reactor 事件监听模块，支持fd上的读写事件和时间事件，事件触发后执行事件上绑定的回调
-- tcp TCP服务器和客户端，服务器能完成多个TCP连接上的请求处理，客户端支持建立连接失败时的超时重连
-- http HTTP模块 http解析器完成，http服务器待完成
-- co 协程模块，待完成
-- rpc RPC模块，待完成
-- 压力测试 待完成
+- base 一些公共的函数和数据定义
+- logger 实现日志输出器, 支持同步和异步两种模式, **异步模式下硬盘写入速度200MB/s以上**
+- timer 实现了基于时间轮的定时器队列
+- reactor 实现了基于reactor模式的事件监听器, 支持监听fd读写事件和超时事件
+- co 实现了用户空间上的协程
+- tcp 实现了tcp服务器和客户器, 服务器能完成多个TCP连接上的请求处理，客户端支持建立连接失败时的超时重连
+- http 实现了异步的http服务器和无拷贝的http报文解析器
 
-## 执行
+文件构成
+- src目录是源代码目录, 其下面的子目录对应各模块的源代码
+- test目录是测试目录, 其下面的子目录对应各模块的测试代码
 
-项目文件组成
-- src目录是源代码目录，其下面的子目录对应各模块的源代码
-- test目录是测试目录，其下面的子目录对应各模块的测试代码
+## 运行
 
-在linux系统下执行如下命令可运行各模块测试代码
+在linux系统下执行如下命令
 ```
 mkdir build
 cd build
 cmake ..
 make
-<执行各模块的测试文件>
+<执行各模块的测试程序>
 ```
 
 ## logger模块
@@ -41,6 +40,10 @@ Logger内部维护两个缓冲块列表buf_list和empty_buf_list
 
 异步模式下，Logger调用append_log和write_log两个方法将日志下入到缓冲块中，另外开启一个线程执行循环，在循环中判断有缓冲块慢或者等待时间超过max_flush_ms，则执行flush_buf操作。在Logger析构时，终止线程函数，同时将buf_list上的所有缓冲块刷盘
 
+## timer模块
+
+
+
 ## reactor模块
 
 EventLoop对象执行时间循环，支持注册和修改fd上的读写事件，添加和修改时间事件。EventLoop的事件循环会阻塞程序执行，一般放入线程中，一个线程与一个EventLoop绑定。线程池多个线程中有多个EventLoop，充分立刻机器CPU多核增加事件处理能力
@@ -51,6 +54,10 @@ EventLoop对象执行时间循环，支持注册和修改fd上的读写事件，
     - 使用time fd提供时间通知功能，time fd设定最近激活的定时器时间，当fd可读时遍历定时器队列激活所有超时的定时器
 - 回调列表 **对象的各种回调注册到EventLoop中来完成实际功能，在多线程EventLoop中，一个对象拥有fd并且一个EventLoop绑定，对象上有fd读写事件的回调，也有与其他对象交互的回调，后一种回调可能在其他线程执行，后一种回调有线程安全问题。**每个EventLoop维护一个回调列表。如果一个对象的回调尽在EventLoop内部执行，在执行断言当前线程必须是绑定EventLoop所在线程，如果一个回调可能在外部执行，将该回调添加到EventLoop的回调列表中。EventLoop一次多路复用IO的等待后，先执行激活fd上的所有事件回调，然后执行回调列表上的所有事件
 - Activater激活阻塞的多路复用IO，使回调列表中的回调可以立刻执行
+
+## co模块
+
+
 
 ## tcp模块
 
@@ -78,5 +85,15 @@ TCPClient
 - 主EventLoop 阻塞程序运行防止程序退出，处理peer fd
 - TCPConnector connect fd首先以阻塞方式初始化，连接连接失败后在EventLoop添加事件事件来延迟重试，连接连接成功后fd改为非阻塞方式加入EventLoop中
 
+## http模块
+
+
+## 参考
+
+- https://github.com/chenshuo/muduo
+- https://github.com/Tencent/libco
+- https://github.com/Gooddbird/tinyrpc
+- https://github.com/nodejs/http-parser
+- https://github.com/qinguoyi/TinyWebServer
 
 

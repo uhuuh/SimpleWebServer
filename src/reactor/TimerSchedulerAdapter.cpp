@@ -32,7 +32,7 @@ TimerSchedulerAdapter::TimerSchedulerAdapter(EventLoop* loop): loop(loop), ti_sc
     };
 
     reset_timefd(ch->get_fd(), 1); // 这里如果设为0，不会激活
-    ch->set_event(EventLoop::EventType::READ, cb);
+    ch->enable_event(EventLoop::EventType::READ, cb);
 }
 
 TimerId TimerSchedulerAdapter::add_timer(Timer ti) {
